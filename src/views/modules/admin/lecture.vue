@@ -129,10 +129,12 @@
       // 获取数据列表
       getDataList () {
         this.dataListLoading = true
+        let meetingId = this.$route.params.id
         this.$http({
           url: this.$http.adornUrl('/admin/lecture/list'),
           method: 'get',
           params: this.$http.adornParams({
+            'meetingId': meetingId,
             'page': this.pageIndex,
             'limit': this.pageSize,
             'key': this.dataForm.key

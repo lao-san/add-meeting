@@ -25,7 +25,7 @@
           </el-option>
         </el-select>
       </template>
-      <!-- <el-input v-model="dataForm.attendersId" placeholder="演讲人id"></el-input> --><el-input v-model="dataForm.attendersId" placeholder="参会人员id"></el-input>
+      <!-- <el-input v-model="dataForm.attendersId" placeholder="演讲人id"></el-input> -->
     </el-form-item>
     <el-form-item label="题目" prop="topic">
       <el-input v-model="dataForm.topic" placeholder="题目"></el-input>
@@ -73,9 +73,9 @@
           meetingId: [
             { required: true, message: '会议id不能为空', trigger: 'blur' }
           ],
-          attendersId: [
-            { required: true, message: '参会人员id不能为空', trigger: 'blur' }
-          ],
+          // attendersId: [
+          //   { required: true, message: '参会人员id不能为空', trigger: 'blur' }
+          // ],
           topic: [
             { required: true, message: '题目不能为空', trigger: 'blur' }
           ],
@@ -87,12 +87,6 @@
           ],
           summary: [
             { required: true, message: '摘要不能为空', trigger: 'blur' }
-          ],
-          createTime: [
-            { required: true, message: '創建時間不能为空', trigger: 'blur' }
-          ],
-          isDel: [
-            { required: true, message: '是否被删除 状态  0：正常   1：删除不能为空', trigger: 'blur' }
           ]
         },
         options: [],
@@ -125,6 +119,7 @@
             })
           }
         })
+        this.meetingId = this.$route.params.id
       },
       // 表单提交
       dataFormSubmit () {

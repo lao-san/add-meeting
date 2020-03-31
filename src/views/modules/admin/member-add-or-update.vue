@@ -23,6 +23,25 @@
       <el-form-item label="头像" prop="titlePic">
         <el-input v-model="dataForm.titlePic" placeholder="头像"></el-input>
       </el-form-item>
+      <el-row>
+        <img :src="showimg" alt="">
+      </el-row>
+      <el-upload
+      :action="upload_url"
+      ref="upload"
+      :before-upload="beforeUploadHandle"
+      :on-success="successHandle"
+      name="upload_file"
+      :auto-upload="false"
+      :data="thumb"
+      style="text-align: center;">
+      <i class="el-icon-upload"></i>
+       <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+      <div class="el-upload__tip" slot="tip">只支持jpg、png、gif格式的图片！只能上传jpg/png文件，且不超过2M</div>
+      <el-radio v-model="radio" label="1">是</el-radio>
+      <el-radio v-model="radio" label="0" >否</el-radio>
+      <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
+    </el-upload>
       <el-form-item label="所属机构" prop="organization">
         <el-input v-model="dataForm.organization" placeholder="所属机构"></el-input>
       </el-form-item>
@@ -125,7 +144,11 @@ export default {
         password: [{ validator: checkPwd, trigger: 'blur' }],
         phone: [{ validator: checkPhone, trigger: 'blur' }],
         email: [{ validator: checkEmail, trigger: 'blur' }]
-      }
+      },
+      upload_url: '',
+      radio: '0',
+      thumb: {'isthumb': 0},
+      showimg: ''
     }
   },
   methods: {
@@ -156,10 +179,13 @@ export default {
               this.dataForm.createTime = data.member.createTime
               this.dataForm.modifyTime = data.member.modifyTime
               this.dataForm.isCheck = data.member.isCheck
+              this.showimg = 'http://121.42.53.174:9008/static' + data.member.titlePic
             }
           })
         }
       })
+      // 上传路径
+      this.upload_url = this.$http.adornUrl(`/sys/filemanager/uploadimg?token=${this.$cookie.get('token')}`)
     },
     // 表单提交
     dataFormSubmit () {
@@ -204,6 +230,33 @@ export default {
           })
         }
       })
+    },
+    // 上传图像
+    submitUpload () {
+      this.$refs.upload.submit()
+    },
+    // 上传之前
+    beforeUploadHandle (file) {
+      this.thumb.isthumb = this.radio
+      if (file.type !== 'image/jpg' && file.type !== 'image/jpeg' && file.type !== 'image/png' && file.type !== 'image/gif') {
+        this.$message.error('只支持jpg、png、gif格式的图片！')
+        return false
+      }
+    },
+    // 上传成功
+    successHandle (response) {
+      console.log(response)
+      if (response && response.code === 0) {
+        if (response.hasOwnProperty('thumb')) {
+          this.dataForm.titlePic = response.thumb
+          this.showimg = 'http://121.42.53.174:9008/static' + response.thumb
+        } else {
+          this.showimg = 'http://121.42.53.174:9008/static' + response.picname
+          this.dataForm.titlePic = response.picname
+        }
+      } else {
+        this.$message.error(response.msg)
+      }
     }
   }
 }
