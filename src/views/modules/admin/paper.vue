@@ -101,7 +101,7 @@
 
 <script>
   import AddOrUpdate from './paper-add-or-update'
-  import PagerRequireSet from './paperrequire-add-or-update'
+//  import PagerRequireSet from './paperrequire-add-or-update'
   export default {
     data () {
       return {
