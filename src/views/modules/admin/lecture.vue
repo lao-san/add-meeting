@@ -35,10 +35,10 @@
         label="会议id">
       </el-table-column>
       <el-table-column
-        prop="attendersId"
+        prop="attendersName"
         header-align="center"
         align="center"
-        label="参会人员id">
+        label="演讲人">
       </el-table-column>
       <el-table-column
         prop="topic"
@@ -68,13 +68,7 @@
         prop="createTime"
         header-align="center"
         align="center"
-        label="創建時間">
-      </el-table-column>
-      <el-table-column
-        prop="isDel"
-        header-align="center"
-        align="center"
-        label="是否被删除 状态  0：正常   1：删除">
+        label="创建时间">
       </el-table-column>
       <el-table-column
         fixed="right"

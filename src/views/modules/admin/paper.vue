@@ -10,7 +10,7 @@
         <el-button v-if="isAuth('admin:paper:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
       </el-form-item>
        <el-form-item>
-        <el-button v-if="isAuth('admin:paperrequire:save')" type="primary" @click="addOrUpdateHandle()">征文要求设置</el-button>
+        <el-button v-if="isAuth('admin:paperrequire:save')" type="primary" @click="setPagerRequireHandle()">征文要求设置</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -29,49 +29,37 @@
         prop="id"
         header-align="center"
         align="center"
-        label="论文id">
-      </el-table-column>
-      <el-table-column
-        prop="meetingId"
-        header-align="center"
-        align="center"
-        label="会员id">
-      </el-table-column>
-      <el-table-column
-        prop="attendersId"
-        header-align="center"
-        align="center"
-        label="参会人员id">
+        label="id">
       </el-table-column>
       <el-table-column
         prop="title"
         header-align="center"
         align="center"
-        label="论文题目">
+        label="投稿题目">
       </el-table-column>
       <el-table-column
-        prop="summary"
+        prop="truename"
         header-align="center"
         align="center"
-        label="摘要">
+        label="姓名">
       </el-table-column>
       <el-table-column
-        prop="paperurl"
+        prop="phone"
         header-align="center"
         align="center"
-        label="论文存放地址">
+        label="联系电话">
+      </el-table-column>
+       <el-table-column
+        prop="email"
+        header-align="center"
+        align="center"
+        label="联系邮箱">
       </el-table-column>
       <el-table-column
         prop="createTime"
         header-align="center"
         align="center"
-        label="创建时间">
-      </el-table-column>
-      <el-table-column
-        prop="isDel"
-        header-align="center"
-        align="center"
-        label="是否被删除 状态  0：正常   1：删除">
+        label="投稿时间">
       </el-table-column>
       <el-table-column
         fixed="right"
@@ -96,12 +84,14 @@
     </el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <!-- 设置征文要求 -->
+    <set-pager-require v-if="setPagerRequireVisible" ref="SetPagerRequire"></set-pager-require>
   </div>
 </template>
 
 <script>
   import AddOrUpdate from './paper-add-or-update'
-//  import PagerRequireSet from './paperrequire-add-or-update'
+  import SetPagerRequire from './paperrequire-add-or-update'
   export default {
     data () {
       return {
@@ -114,13 +104,17 @@
         totalPage: 0,
         dataListLoading: false,
         dataListSelections: [],
-        addOrUpdateVisible: false
+        addOrUpdateVisible: false,
+        setPagerRequireVisible: false,
+        meetingId: 0
       }
     },
     components: {
-      AddOrUpdate
+      AddOrUpdate,
+      SetPagerRequire
     },
     activated () {
+      this.meetingId = this.$route.params.id
       this.getDataList()
     },
     methods: {
@@ -131,6 +125,7 @@
           url: this.$http.adornUrl('/admin/paper/list'),
           method: 'get',
           params: this.$http.adornParams({
+            'meetingId': this.meetingId,
             'page': this.pageIndex,
             'limit': this.pageSize,
             'key': this.dataForm.key
@@ -166,6 +161,12 @@
         this.addOrUpdateVisible = true
         this.$nextTick(() => {
           this.$refs.addOrUpdate.init(id)
+        })
+      },
+      setPagerRequireHandle () {
+        this.setPagerRequireVisible = true
+        this.$nextTick(() => {
+          this.$refs.SetPagerRequire.init(this.meetingId)
         })
       },
       // 删除

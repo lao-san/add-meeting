@@ -17,31 +17,31 @@
       <el-form-item label="用户名" prop="username">
         <el-input v-model="dataForm.username" placeholder="用户名"></el-input>
       </el-form-item>
-      <el-form-item label="密码" prop="password">
+      <el-form-item label="密码" prop="password" v-if="!dataForm.id">
         <el-input v-model="dataForm.password" placeholder="密码"></el-input>
       </el-form-item>
       <el-form-item label="头像" prop="titlePic">
         <el-input v-model="dataForm.titlePic" placeholder="头像"></el-input>
       </el-form-item>
       <el-row>
-        <img :src="showimg" alt="">
+        <img :src="showimg" alt="" style="width:300px;">
       </el-row>
       <el-upload
-      :action="upload_url"
-      ref="upload"
-      :before-upload="beforeUploadHandle"
-      :on-success="successHandle"
-      name="upload_file"
-      :auto-upload="false"
-      :data="thumb"
-      style="text-align: center;">
-      <i class="el-icon-upload"></i>
-       <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-      <div class="el-upload__tip" slot="tip">只支持jpg、png、gif格式的图片！只能上传jpg/png文件，且不超过2M</div>
-      <el-radio v-model="radio" label="1">是</el-radio>
-      <el-radio v-model="radio" label="0" >否</el-radio>
-      <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
-    </el-upload>
+        :action="upload_url"
+        ref="upload"
+        :before-upload="beforeUploadHandle"
+        :on-success="successHandle"
+        name="upload_file"
+        :auto-upload="false"
+        :data="thumb"
+        style="text-align: center;">
+        <i class="el-icon-upload"></i>
+        <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+        <div class="el-upload__tip" slot="tip">只支持jpg、png、gif格式的图片！只能上传jpg/png文件，且不超过2M</div>
+        <el-radio v-model="radio" label="1">是</el-radio>
+        <el-radio v-model="radio" label="0" >否</el-radio>
+        <el-button style="margin-left: 10px;" size="small" type="success" @click="submitUpload">上传到服务器</el-button>
+      </el-upload>
       <el-form-item label="所属机构" prop="organization">
         <el-input v-model="dataForm.organization" placeholder="所属机构"></el-input>
       </el-form-item>
@@ -57,15 +57,61 @@
       <el-form-item label="邮箱" prop="email">
         <el-input v-model="dataForm.email" placeholder="邮箱"></el-input>
       </el-form-item>
-      <el-form-item label="审核" prop="isCheck">
+      <el-form-item label="办公电话" prop="officephone">
+        <el-input v-model="dataForm.officephone" placeholder="办公电话"></el-input>
+      </el-form-item>
+       <el-form-item label="其他联系方式" prop="otherphone">
+        <el-input v-model="dataForm.otherphone" placeholder="其他联系方式"></el-input>
+      </el-form-item>
+      <!-- <el-form-item label="审核" prop="isCheck">
         <el-radio v-model="dataForm.isCheck" :label="0">否</el-radio>
         <el-radio v-model="dataForm.isCheck" :label="1">是</el-radio>
+      </el-form-item> -->
+       <el-form-item label="负责人" prop="servicerId">
+        <!-- <el-input v-model="dataForm.email" placeholder="其他联系方式"></el-input> -->
+        <template>
+          <el-select
+            v-model="dataForm.servicerId"
+            filterable
+            remote
+            reserve-keyword
+            placeholder="请输入工作人员姓名"
+            @change="$forceUpdate()"
+            :remote-method="selectEmployeeIdByname"
+            :loading="loading">
+            <el-option
+              v-for="item in employeeList"
+              :key="item.id"
+              :label="item.truename"
+              :value="item.id">
+            </el-option>
+          </el-select>
+        </template>
+      </el-form-item>
+       <el-form-item label="备注" prop="note">
+        <el-input  type="textarea" v-model="dataForm.note" :rows="3" placeholder="备注"></el-input>
       </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>
-      <el-button type="primary" @click="dataFormSubmit()">确定</el-button>
+      <el-button type="primary" @click="dataFormSubmit()">保存</el-button>
     </span>
+    <div v-if="dataForm.id">
+      <h3>参会信息</h3>
+      <span>参会次数: </span><span> {{this.meetingList.length}}</span>
+      <div>
+        <span>选择会议</span>
+        <el-select v-model="meetingId" placeholder="请输入选择会议">
+          <el-option
+            v-for="item in meetingList"
+            :key="item.meeting_id"
+            :label="item.name_cn"
+            :value="item.meeting_id">
+          </el-option>
+        </el-select>
+        <span>查看</span>
+      </div>
+    </div>
   </el-dialog>
 </template>
 
@@ -125,8 +171,10 @@ export default {
         jobTitle: '',
         phone: '',
         email: '',
-        createTime: '',
-        isCheck: 0
+        officephone: '',
+        otherphone: '',
+        servicerId: 0,
+        note: ''
       },
       dataRule: {
         username: [
@@ -135,12 +183,6 @@ export default {
         truename: [
           { required: true, message: '姓名不能为空', trigger: 'blur' }
         ],
-        // password: [
-        //   { required: true, message: '密码不能为空', trigger: 'blur' }
-        // ],
-        // phone: [
-        //   { required: true, message: '电话不能为空', trigger: 'blur' }
-        // ]
         password: [{ validator: checkPwd, trigger: 'blur' }],
         phone: [{ validator: checkPhone, trigger: 'blur' }],
         email: [{ validator: checkEmail, trigger: 'blur' }]
@@ -148,7 +190,11 @@ export default {
       upload_url: '',
       radio: '0',
       thumb: {'isthumb': 0},
-      showimg: ''
+      showimg: '',
+      employeeList: [],
+      loading: false,
+      meetingList: [],
+      meetingId: ''
     }
   },
   methods: {
@@ -167,7 +213,9 @@ export default {
             params: this.$http.adornParams()
           }).then(({ data }) => {
             if (data && data.code === 0) {
-              console.log(data.member)
+              this.employeeList = [{'id': data.employee.id, 'truename': data.employee.truename}]
+              this.meetingList = data.meetingList
+              // console.log(data.member)
               this.dataForm.username = data.member.username
               this.dataForm.truename = data.member.truename
               this.dataForm.titlePic = data.member.titlePic
@@ -176,9 +224,10 @@ export default {
               this.dataForm.jobTitle = data.member.jobTitle
               this.dataForm.phone = data.member.phone
               this.dataForm.email = data.member.email
-              this.dataForm.createTime = data.member.createTime
-              this.dataForm.modifyTime = data.member.modifyTime
-              this.dataForm.isCheck = data.member.isCheck
+              this.dataForm.officephone = data.member.officephone
+              this.dataForm.otherphone = data.member.otherphone
+              this.dataForm.servicerId = data.member.servicerId
+              this.dataForm.note = data.member.note
               this.showimg = 'http://121.42.53.174:9008/static' + data.member.titlePic
             }
           })
@@ -197,21 +246,21 @@ export default {
             ),
             method: 'post',
             data: this.$http.adornData({
-              id: this.dataForm.id || undefined,
-              username: this.dataForm.username,
-              password: this.dataForm.password,
-              truename: this.dataForm.truename,
-              sex: this.dataForm.sex,
-              titlePic: this.dataForm.titlePic,
-              organization: this.dataForm.organization,
-              position: this.dataForm.position,
-              jobTitle: this.dataForm.jobTitle,
-              phone: this.dataForm.phone,
-              email: this.dataForm.email,
-              createTime: this.dataForm.createTime,
-              modifyTime: this.dataForm.modifyTime,
-              isCheck: this.dataForm.isCheck,
-              isDel: this.dataForm.isDel
+              'id': this.dataForm.id || undefined,
+              'username': this.dataForm.username,
+              'password': this.dataForm.password,
+              'truename': this.dataForm.truename,
+              'sex': this.dataForm.sex,
+              'titlePic': this.dataForm.titlePic,
+              'organization': this.dataForm.organization,
+              'position': this.dataForm.position,
+              'jobTitle': this.dataForm.jobTitle,
+              'phone': this.dataForm.phone,
+              'email': this.dataForm.email,
+              'officephone': this.dataForm.officephone,
+              'otherphone': this.dataForm.otherphone,
+              'servicerId': this.dataForm.servicerId,
+              'note': this.dataForm.note
             })
           }).then(({ data }) => {
             if (data && data.code === 0) {
@@ -257,6 +306,22 @@ export default {
       } else {
         this.$message.error(response.msg)
       }
+    },
+    // 通过姓名模糊查询参会人员id
+    selectEmployeeIdByname (name) {
+      this.loading = true
+      this.$http({
+        url: this.$http.adornUrl(`/admin/employee/listbyname`),
+        method: 'get',
+        params: this.$http.adornParams({
+          'truename': name
+        })
+      }).then(({data}) => {
+        if (data && data.code === 0) {
+          this.loading = false
+          this.employeeList = data.list
+        }
+      })
     }
   }
 }

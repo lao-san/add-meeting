@@ -4,9 +4,6 @@
     :close-on-click-modal="false"
     :visible.sync="visible">
     <el-form :model="dataForm" :rules="dataRule" ref="dataForm" @keyup.enter.native="dataFormSubmit()" label-width="80px">
-    <el-form-item label="会议id" prop="meetingId">
-      <el-input v-model="dataForm.meetingId" placeholder="会议id"></el-input>
-    </el-form-item>
     <el-form-item label="参会人员id" prop="attendersId">
        <template>
         <el-select
@@ -38,12 +35,6 @@
     </el-form-item>
     <el-form-item label="摘要" prop="summary">
       <el-input v-model="dataForm.summary" placeholder="摘要"></el-input>
-    </el-form-item>
-    <el-form-item label="創建時間" prop="createTime">
-      <el-input v-model="dataForm.createTime" placeholder="創建時間"></el-input>
-    </el-form-item>
-    <el-form-item label="是否被删除 状态  0：正常   1：删除" prop="isDel">
-      <el-input v-model="dataForm.isDel" placeholder="是否被删除 状态  0：正常   1：删除"></el-input>
     </el-form-item>
     </el-form>
     <span slot="footer" class="dialog-footer">
@@ -107,14 +98,13 @@
               params: this.$http.adornParams()
             }).then(({data}) => {
               if (data && data.code === 0) {
-                this.dataForm.meetingId = data.lecture.meetingId
+                this.options.add({'id': data.attenders.id, 'name': data.attenders.name})
+                // 表单数据
                 this.dataForm.attendersId = data.lecture.attendersId
                 this.dataForm.topic = data.lecture.topic
                 this.dataForm.branchId = data.lecture.branchId
                 this.dataForm.speechTime = data.lecture.speechTime
                 this.dataForm.summary = data.lecture.summary
-                this.dataForm.createTime = data.lecture.createTime
-                this.dataForm.isDel = data.lecture.isDel
               }
             })
           }
@@ -135,9 +125,7 @@
                 'topic': this.dataForm.topic,
                 'branchId': this.dataForm.branchId,
                 'speechTime': this.dataForm.speechTime,
-                'summary': this.dataForm.summary,
-                'createTime': this.dataForm.createTime,
-                'isDel': this.dataForm.isDel
+                'summary': this.dataForm.summary
               })
             }).then(({data}) => {
               if (data && data.code === 0) {

@@ -26,19 +26,19 @@
         prop="id"
         header-align="center"
         align="center"
-        label="会员id (会员表)">
-      </el-table-column>
-      <el-table-column
-        prop="username"
-        header-align="center"
-        align="center"
-        label="用户名">
+        label="id">
       </el-table-column>
       <el-table-column
         prop="truename"
         header-align="center"
         align="center"
         label="姓名">
+      </el-table-column>
+      <el-table-column
+        prop="username"
+        header-align="center"
+        align="center"
+        label="账号">
       </el-table-column>
       <el-table-column
         prop="organization"
@@ -71,9 +71,28 @@
         label="邮箱">
       </el-table-column>
       <el-table-column
+        prop="meetingCounts"
+        header-align="center"
+        align="center"
+        label="参会场次">
+      </el-table-column>
+      <el-table-column
+        prop="meetingName"
+        header-align="center"
+        align="center"
+        label="最后参加会议">
+      </el-table-column>
+      <el-table-column
+        prop="servicerName"
+        header-align="center"
+        align="center"
+        label="负责人">
+      </el-table-column>
+      <el-table-column
         prop="createTime"
         header-align="center"
         align="center"
+        width="160"
         label="创建时间">
       </el-table-column>
       <el-table-column
