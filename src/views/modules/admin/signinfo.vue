@@ -23,24 +23,6 @@
         width="50">
       </el-table-column>
       <el-table-column
-        prop="id"
-        header-align="center"
-        align="center"
-        label="签到id">
-      </el-table-column>
-      <el-table-column
-        prop="aId"
-        header-align="center"
-        align="center"
-        label="参会人员id">
-      </el-table-column>
-      <el-table-column
-        prop="meetingId"
-        header-align="center"
-        align="center"
-        label="会议id">
-      </el-table-column>
-      <el-table-column
         prop="truename"
         header-align="center"
         align="center"
@@ -53,70 +35,45 @@
         label="所属机构(单位名称、公司名称">
       </el-table-column>
       <el-table-column
-        prop="position"
-        header-align="center"
-        align="center"
-        label="职位id">
-      </el-table-column>
-      <el-table-column
-        prop="jobTitle"
-        header-align="center"
-        align="center"
-        label="职称">
-      </el-table-column>
-      <el-table-column
-        prop="phone"
-        header-align="center"
-        align="center"
-        label="电话">
-      </el-table-column>
-      <el-table-column
-        prop="typeId"
-        header-align="center"
-        align="center"
-        label="参会人员类型id">
-      </el-table-column>
-      <el-table-column
         prop="typeAttenders"
         header-align="center"
         align="center"
-        label="">
-      </el-table-column>
-      <el-table-column
-        prop="servicer"
-        header-align="center"
-        align="center"
-        label="负责人（员工id）">
-      </el-table-column>
-      <el-table-column
-        prop="servername"
-        header-align="center"
-        align="center"
-        label="">
+        label="用户类型">
       </el-table-column>
       <el-table-column
         prop="isPay"
         header-align="center"
         align="center"
-        label="">
+        label="是否已缴费">
+        <template slot-scope="scope">
+          <span v-if="scope.row.isPay === 1">是</span>
+          <span v-else>否</span>
+        </template>
       </el-table-column>
       <el-table-column
-        prop="status"
+        prop="regflag"
         header-align="center"
         align="center"
-        label="签到状态">
+        label="注册情况">
+        <template slot-scope="scope">
+          <span>{{registerStatus[scope.row.regflag]}}</span>
+        </template>
       </el-table-column>
       <el-table-column
         prop="badge"
         header-align="center"
         align="center"
         label="是否完成胸卡打印">
+        <template slot-scope="scope">
+          <span v-if="scope.row.badge === 1">是</span>
+          <span v-else>否</span>
+        </template>
       </el-table-column>
       <el-table-column
-        prop="lastTime"
+        prop="servername"
         header-align="center"
         align="center"
-        label="最后签到时间">
+        label="负责人">
       </el-table-column>
       <el-table-column
         prop="note"
@@ -125,16 +82,10 @@
         label="备注">
       </el-table-column>
       <el-table-column
-        prop="regflag"
-        header-align="center"
-        align="center"
-        label="注册情况 0, 1, 2, 现场注册">
-      </el-table-column>
-      <el-table-column
         prop="createTime"
         header-align="center"
         align="center"
-        label="创建时间">
+        label="注册时间">
       </el-table-column>
       <el-table-column
         fixed="right"
@@ -167,6 +118,13 @@
   export default {
     data () {
       return {
+        // 注册情况
+        registerStatus: {
+          '0': '',
+          '1': '网上报名',
+          '2': '现场注册',
+          '3': '后台添加'
+        },
         dataForm: {
           key: ''
         },
@@ -176,13 +134,15 @@
         totalPage: 0,
         dataListLoading: false,
         dataListSelections: [],
-        addOrUpdateVisible: false
+        addOrUpdateVisible: false,
+        meetindId: 0
       }
     },
     components: {
       AddOrUpdate
     },
     activated () {
+      this.meetindId = this.$route.params.id
       this.getDataList()
     },
     methods: {
@@ -193,6 +153,7 @@
           url: this.$http.adornUrl('/admin/signinfo/list'),
           method: 'get',
           params: this.$http.adornParams({
+            'meetingId': this.meetindId,
             'page': this.pageIndex,
             'limit': this.pageSize,
             'key': this.dataForm.key

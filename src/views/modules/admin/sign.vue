@@ -128,10 +128,8 @@
         meetingId: 0
       }
     },
-    created () {
-      this.meetingId = this.$route.params.id
-    },
     activated () {
+      this.meetingId = this.$route.params.id
       this.getDataList()
     },
     methods: {

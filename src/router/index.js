@@ -69,8 +69,7 @@ router.beforeEach((to, from, next) => {
       params: http.adornParams()
     }).then(({data}) => {
       if (data && data.code === 0) {
-        // fnAddDynamicMenuRoutes(data.menuList)
-        fnAddDynamicMenuRoutesMy(data.menuList)
+        fnAddDynamicMenuRoutes(data.menuList)
         router.options.isAddDynamicMenuRoutes = true
         sessionStorage.setItem('menuList', JSON.stringify(data.menuList || '[]'))
         sessionStorage.setItem('permissions', JSON.stringify(data.permissions || '[]'))
@@ -104,66 +103,12 @@ function fnCurrentRouteType (route, globalRoutes = []) {
 }
 
 /**
+ * 2020-03-11 修改动态路由
  * 添加动态(菜单)路由
  * @param {*} menuList 菜单列表
  * @param {*} routes 递归创建的动态(菜单)路由
  */
-// function fnAddDynamicMenuRoutes (menuList = [], routes = []) {
-//   var temp = []
-//   for (var i = 0; i < menuList.length; i++) {
-//     if (menuList[i].list && menuList[i].list.length >= 1) {
-//       temp = temp.concat(menuList[i].list)
-//     } else if (menuList[i].url && /\S/.test(menuList[i].url)) {
-//       menuList[i].url = menuList[i].url.replace(/^\//, '')
-//       var route = {
-//         path: menuList[i].url.replace('/', '-'),
-//         component: null,
-//         name: menuList[i].url.replace('/', '-'),
-//         meta: {
-//           menuId: menuList[i].menuId,
-//           title: menuList[i].name,
-//           isDynamic: true,
-//           isTab: true,
-//           iframeUrl: ''
-//         }
-//       }
-//       // url以http[s]://开头, 通过iframe展示
-//       if (isURL(menuList[i].url)) {
-//         route['path'] = `i-${menuList[i].menuId}`
-//         route['name'] = `i-${menuList[i].menuId}`
-//         route['meta']['iframeUrl'] = menuList[i].url
-//       } else {
-//         try {
-//           route['component'] = _import(`modules/${menuList[i].url}`) || null
-//         } catch (e) {}
-//       }
-
-//       routes.push(route)
-//     }
-//   }
-//   if (temp.length >= 1) {
-//     fnAddDynamicMenuRoutes(temp, routes)
-//   } else {
-//     mainRoutes.name = 'main-dynamic'
-//     mainRoutes.children = routes
-//     router.addRoutes([
-//       mainRoutes,
-//       { path: '*', redirect: { name: '404' } }
-//     ])
-//     sessionStorage.setItem('dynamicMenuRoutes', JSON.stringify(mainRoutes.children || '[]'))
-//     console.log('\n')
-//     console.log('%c!<-------------------- 动态(菜单)路由 s -------------------->', 'color:blue')
-//     console.log(mainRoutes.children)
-//     console.log('%c!<-------------------- 动态(菜单)路由 e -------------------->', 'color:blue')
-//   }
-// }
-
-/**
- * 2020-03-11 修改动态路由
- * @param {*} menuList 菜单列表
- * @param {*} routes 递归创建的动态(菜单)路由
- */
-function fnAddDynamicMenuRoutesMy (menuList = [], routes = []) {
+function fnAddDynamicMenuRoutes (menuList = [], routes = []) {
   var temp = []
   for (var i = 0; i < menuList.length; i++) {
     if (menuList[i].list && menuList[i].list.length >= 1) {
@@ -174,6 +119,9 @@ function fnAddDynamicMenuRoutesMy (menuList = [], routes = []) {
         path: addMeetingId(menuList[i].url.replace('/', '-'), menuList[i].me),
         component: null,
         name: addMeetingId(menuList[i].url.replace('/', '-'), menuList[i].me),
+        // path: menuList[i].url.replace('/', '-'),
+        // component: null,
+        // name: menuList[i].url.replace('/', '-'),
         meta: {
           menuId: menuList[i].menuId,
           title: menuList[i].name,
@@ -197,7 +145,7 @@ function fnAddDynamicMenuRoutesMy (menuList = [], routes = []) {
     }
   }
   if (temp.length >= 1) {
-    fnAddDynamicMenuRoutesMy(temp, routes)
+    fnAddDynamicMenuRoutes(temp, routes)
   } else {
     mainRoutes.name = 'main-dynamic'
     mainRoutes.children = routes
@@ -213,6 +161,11 @@ function fnAddDynamicMenuRoutesMy (menuList = [], routes = []) {
   }
 }
 
+/**
+ * 会议相关路由添加路由参数id
+ * @param {*} url
+ * @param {*} me
+ */
 function addMeetingId (url, me) {
   // console.log(url)
   if (me === 1) {
