@@ -23,7 +23,7 @@
       style="width: 100%;"
     >
       <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
-      <el-table-column prop="id" header-align="center" align="center" label="会员id (会员表)"></el-table-column>
+      <!-- <el-table-column prop="id" header-align="center" align="center" label="会员id (会员表)"></el-table-column> -->
       <el-table-column prop="username" header-align="center" align="center" label="用户名"></el-table-column>
       <el-table-column prop="truename" header-align="center" align="center" label="姓名"></el-table-column>
       <el-table-column prop="organization" header-align="center" align="center" label="所属机构"></el-table-column>
@@ -49,9 +49,10 @@
           >是</el-button>
         </template>
       </el-table-column>
-      <el-table-column fixed="right" header-align="center" align="center" width="150" label="操作">
+      <el-table-column fixed="right" header-align="center" align="center" width="200" label="操作">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
+          <el-button type="text" size="small" @click="repasswordHandle(scope.row.id)">重置密码</el-button>
           <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
@@ -137,6 +138,26 @@ export default {
       this.addOrUpdateVisible = true;
       this.$nextTick(() => {
         this.$refs.addOrUpdate.init(id);
+      });
+    },
+
+    // 重置密码
+    repasswordHandle(id) {
+      this.$http({
+        url: this.$http.adornUrl(`/admin/member/repassword/${id}`),
+        method: "post",
+        data: this.$http.adornParams()
+      }).then(({ data }) => {
+        if (data && data.code === 0) {
+          this.$message({
+            message: "操作成功",
+            type: "success",
+            duration: 1000,
+            onClose: () => {}
+          });
+        } else {
+          this.$message.error(data.msg);
+        }
       });
     },
     // 删除

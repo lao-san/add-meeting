@@ -17,9 +17,9 @@
       <el-form-item label="会议名称(中文)" prop="nameCn">
         <el-input v-model="dataForm.nameCn" placeholder="会议名称(中文)"></el-input>
       </el-form-item>
-      <!-- <el-form-item label="会议名称(英文)" prop="nameEn">
+      <el-form-item label="会议名称(英文)" prop="nameEn">
         <el-input v-model="dataForm.nameEn" placeholder="会议名称(英文)"></el-input>
-      </el-form-item>-->
+      </el-form-item>
       <el-form-item label="举办地点" prop="address">
         <el-input v-model="dataForm.address" placeholder="举办地点"></el-input>
       </el-form-item>
@@ -63,13 +63,41 @@
       </el-form-item>
 
       <el-form-item label="涉及学科" prop="subjects">
-        <el-input v-model="dataForm.subjects" placeholder="涉及学科"></el-input>
+        <!-- <el-input v-model="dataForm.subjects" placeholder=""></el-input> -->
+        <el-autocomplete
+          v-model="dataForm.subjects"
+          :fetch-suggestions="querySearchAsync"
+          placeholder="每次添加一个学科"
+          style="width:690px"
+        ></el-autocomplete>
+        <el-button @click="handSubject">添加</el-button>
+      </el-form-item>
+      <el-form-item v-if="this.subjects.length!==0">
+        <el-tag v-for="(item) in subjects" style="margin-right:8px">{{item}}</el-tag>
       </el-form-item>
       <el-form-item label="涉及行业" prop="industries">
-        <el-input v-model="dataForm.industries" placeholder="涉及行业"></el-input>
+        <el-autocomplete
+          v-model="dataForm.industries"
+          :fetch-suggestions="queryIndustriesAsync"
+          placeholder="每次添加一个行业"
+          style="width:690px"
+        ></el-autocomplete>
+        <el-button @click="handIndustries">添加</el-button>
+      </el-form-item>
+      <el-form-item v-if="this.industry.length!==0">
+        <el-tag v-for="(item) in industry" style="margin-right:8px">{{item}}</el-tag>
       </el-form-item>
       <el-form-item label="参会人员类型" prop="attendersType">
-        <el-input v-model="dataForm.attendersType" placeholder="参会人员类型"></el-input>
+        <el-autocomplete
+          v-model="dataForm.attendersType"
+          :fetch-suggestions="queryAttendersTypeAsync"
+          placeholder="每次添加一个类型"
+          style="width:690px"
+        ></el-autocomplete>
+        <el-button @click="handAttendersType">添加</el-button>
+      </el-form-item>
+      <el-form-item v-if="this.typesofattender.length!==0">
+        <el-tag v-for="(item) in typesofattender" style="margin-right:8px">{{item}}</el-tag>
       </el-form-item>
       <el-form-item label="会议负责人" prop="serviceEmp">
         <el-input v-model="dataForm.serviceEmp" placeholder="会议负责人"></el-input>
@@ -191,22 +219,13 @@ export default {
         endTime: [
           { required: true, message: "结束时间不能为空", trigger: "blur" }
         ],
-        titlePicture: [
-          {
-            required: true,
-            message: "会议封面图片地址不能为空",
-            trigger: "blur"
-          }
-        ],
-        subjects: [
-          { required: true, message: "涉及学科不能为空", trigger: "blur" }
-        ],
-        industries: [
-          { required: true, message: "涉及行业不能为空", trigger: "blur" }
-        ],
-        attendersType: [
-          { required: true, message: "参会人员类型不能为空", trigger: "blur" }
-        ],
+        // titlePicture: [
+        //   {
+        //     required: true,
+        //     message: "会议封面图片地址不能为空",
+        //     trigger: "blur"
+        //   }
+        // ],
         serviceEmp: [
           { required: true, message: "会议负责人不能为空", trigger: "blur" }
         ],
@@ -259,8 +278,22 @@ export default {
       },
       dialogImageUrl: "",
       dialogVisible: false,
-      titlePictureList: []
+      titlePictureList: [],
+      page: 0,
+      limit: 10,
+      key: "",
+      restaurants: [], //学科表信息
+      subjects: [], // 提交后台学科表
+      industryRestaurants: [], //行业表信息
+      industry: [], //提交后台行业表
+      typesofattendersRestaurants: [], //参会人员表信息
+      typesofattender: [] //参会人员提交后台
     };
+  },
+  mounted() {
+    this.getSubject();
+    this.getIndustries();
+    this.getAttendersType();
   },
   methods: {
     init(id) {
@@ -275,7 +308,6 @@ export default {
             params: this.$http.adornParams()
           }).then(({ data }) => {
             if (data && data.code === 0) {
-              this.dataForm.companyId = data.meeting.companyId;
               this.dataForm.nameCn = data.meeting.nameCn;
               this.dataForm.nameEn = data.meeting.nameEn;
               this.dataForm.address = data.meeting.address;
@@ -292,9 +324,6 @@ export default {
               this.dataForm.subDeadline = data.meeting.subDeadline;
               this.dataForm.subRequirement = data.meeting.subRequirement;
               this.dataForm.introduction = data.meeting.introduction;
-              this.dataForm.paperRequireId = data.meeting.paperRequireId;
-              this.dataForm.createTime = data.meeting.createTime;
-              this.dataForm.modifyTime = data.meeting.modifyTime;
             }
           });
         }
@@ -313,30 +342,29 @@ export default {
             ),
             method: "post",
             data: this.$http.adornData({
-              id: this.dataForm.id || undefined,
-              companyId: this.dataForm.companyId,
               nameCn: this.dataForm.nameCn,
               nameEn: this.dataForm.nameEn,
               address: this.dataForm.address,
               startTime: this.dataForm.startTime,
               endTime: this.dataForm.endTime,
               officeWebsite: this.dataForm.officeWebsite,
-              titlePicture: this.titlePicture.list.join(),
-              subjects: this.dataForm.subjects,
-              industries: this.dataForm.industries,
-              attendersType: this.dataForm.attendersType,
+              titlePicture: this.titlePictureList.join(),
+              subjects: this.subjects.join(),
+              industries: this.industry.join(),
+              attendersType: this.typesofattender.join(),
               serviceEmp: this.dataForm.serviceEmp,
               onlineRegDeadline: this.dataForm.onlineRegDeadline,
               onsiteRegDeadline: this.dataForm.onsiteRegDeadline,
               subDeadline: this.dataForm.subDeadline,
               subRequirement: this.dataForm.subRequirement,
-              introduction: this.dataForm.introduction,
-              paperRequireId: this.dataForm.paperRequireId,
-              createTime: this.dataForm.createTime,
-              modifyTime: this.dataForm.modifyTime
+              introduction: this.dataForm.introduction
             })
           }).then(({ data }) => {
             if (data && data.code === 0) {
+              this.subjects = "";
+              this.titlePictureList = "";
+              this.industry = "";
+              this.typesofattender = "";
               this.$message({
                 message: "操作成功",
                 type: "success",
@@ -353,6 +381,7 @@ export default {
         }
       });
     },
+    // 上传会议图片
     handleRemove(file, fileList) {
       console.log(file, fileList);
     },
@@ -360,7 +389,7 @@ export default {
       window.console.log(response);
       if (response && response.code === 0) {
         this.titlePictureList.push(response.picname);
-        window.console.log(this.titlePictureList.join());
+        // window.console.log(this.titlePictureList.join());
         // if (response) {
         //   this.dataForm.titlePicture = response.thumb;
         //   // this.showimg = "http://121.42.53.174:9008/static" + response.thumb;
@@ -370,6 +399,121 @@ export default {
         // }
       } else {
         this.$message.error(response.msg);
+      }
+    },
+    //获取会议学科
+    getSubject() {
+      this.$http({
+        url: this.$http.adornUrl("/admin/subject/list"),
+        method: "get",
+        params: {
+          page: this.page,
+          limit: this.limit
+        }
+      }).then(res => {
+        if (res && res.data.code === 0) {
+          this.restaurants = res.data.page.list;
+          for (let i of this.restaurants) {
+            i.value = i.name;
+          }
+        }
+      });
+    },
+    //会议回显
+    querySearchAsync(queryString, cb) {
+      var restaurants = this.restaurants;
+      var results = queryString
+        ? restaurants.filter(this.createStateFilter(queryString))
+        : restaurants;
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        cb(results);
+      }, 1000 * Math.random());
+    },
+    createStateFilter(queryString) {
+      return restaurant => {
+        return (
+          restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
+          0
+        );
+      };
+    },
+    //学科
+    handSubject() {
+      if (this.dataForm.subjects) {
+        this.subjects.push(this.dataForm.subjects);
+        this.dataForm.subjects = "";
+      }
+    },
+    getIndustries() {
+      this.$http({
+        url: this.$http.adornUrl("/admin/industry/list"),
+        method: "get",
+        params: {
+          page: this.page,
+          limit: this.limit
+        }
+      }).then(res => {
+        if (res && res.data.code === 0) {
+          this.industryRestaurants = res.data.page.list;
+          for (let i of this.industryRestaurants) {
+            i.value = i.name;
+          }
+        }
+      });
+    },
+    // 行业回显
+    queryIndustriesAsync(queryString, cb) {
+      let restaurants = this.industryRestaurants;
+      let results = queryString
+        ? restaurants.filter(this.createStateFilter(queryString))
+        : restaurants;
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        cb(results);
+      }, 1000 * Math.random());
+    },
+
+    //添加行业下tag渲染
+    handIndustries() {
+      if (this.dataForm.industries) {
+        this.industry.push(this.dataForm.industries);
+        this.dataForm.industries = "";
+      }
+    },
+    //获取类型表
+    getAttendersType() {
+      this.$http({
+        url: this.$http.adornUrl("/admin/typesofattenders/list"),
+        method: "get",
+        params: {
+          page: this.page,
+          limit: this.limit
+        }
+      }).then(res => {
+        if (res && res.data.code === 0) {
+          this.typesofattendersRestaurants = res.data.page.list;
+          for (let i of this.typesofattendersRestaurants) {
+            i.value = i.name;
+          }
+        }
+      });
+    },
+    //添加参会人员类型
+    queryAttendersTypeAsync(queryString, cb) {
+      let restaurants = this.typesofattendersRestaurants;
+      let results = queryString
+        ? restaurants.filter(this.createStateFilter(queryString))
+        : restaurants;
+      clearTimeout(this.timeout);
+      this.timeout = setTimeout(() => {
+        cb(results);
+      }, 1000 * Math.random());
+    },
+    handAttendersType() {
+      if (this.dataForm.attendersType) {
+        this.typesofattender.push(this.dataForm.attendersType);
+        this.dataForm.attendersType = "";
       }
     }
   }

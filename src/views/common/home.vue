@@ -18,7 +18,7 @@
           <h2>未发布中的会议</h2>
         </div>
       </el-col>
-      <meeting-box v-for="item in unpublished" :key="item.id" :list="item"></meeting-box>
+      <meeting-box v-for="item in unpublished" :key="item.id" :list="item" style="margin-top:10px;"></meeting-box>
     </el-row>
     <el-row>
       <el-col :span="24">
@@ -28,7 +28,7 @@
       </el-col>
     </el-row>
     <el-row>
-      <meeting-box v-for="item in release" :key="item.id" :list="item"></meeting-box>
+      <meeting-box v-for="item in release" :key="item.id" :list="item" style="margin-top:20px;"></meeting-box>
     </el-row>
     <el-row>
       <el-col :span="24">
@@ -38,7 +38,7 @@
       </el-col>
     </el-row>
     <el-row>
-      <meeting-box v-for="item in delRelease" :key="item.id" :list="item"></meeting-box>
+      <meeting-box v-for="item in delRelease" :key="item.id" :list="item" style="margin-top:20px;"></meeting-box>
     </el-row>
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
@@ -58,8 +58,8 @@ export default {
       unpublished: [], // 未发布
       release: [], //已发布
       delRelease: [], //结束
-      pageIndex: 1,
-      pageSize: 10,
+      pageIndex: 0,
+      pageSize: 30,
       totalPage: 0,
       dataListLoading: false,
       dataListSelections: [],

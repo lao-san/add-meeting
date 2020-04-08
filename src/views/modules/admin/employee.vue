@@ -103,6 +103,7 @@ export default {
         })
       }).then(({ data }) => {
         if (data && data.code === 0) {
+          window.console.log(data.page.list);
           this.dataList = data.page.list;
           this.totalPage = data.page.totalCount;
         } else {

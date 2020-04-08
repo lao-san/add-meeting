@@ -1,6 +1,6 @@
 <template>
-  <el-col :span="4" style="margin-left:30px"  @click.native="handClick()">
-    <el-card :body-style="{ padding: '8px' }">
+  <el-col :span="4" style="margin-left:30px"  @click.native="handClick()" >
+    <el-card :body-style="{ padding: '8px' }" style="height:380px">
       <div class="bg" :style="{backgroundImage: 'url(' + httpimage + ')', backgroundSize:'cover'}"></div>
       <div style="padding: 14px;">
         <span style="font-size:20px">{{this.list.nameCn}}</span>
