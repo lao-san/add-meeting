@@ -148,7 +148,6 @@ export default {
               this.dataForm.email = data.employee.email;
               this.dataForm.createTime = data.employee.createTime;
               this.dataForm.modifyTime = data.employee.modifyTime;
-              this.dataForm.isDel = data.employee.isDel;
             }
           });
         }
@@ -170,7 +169,6 @@ export default {
           limit: this.pageSize
         })
       }).then(({ data }) => {
-        window.console.log(data);
         if (data && data.code === 0) {
           this.dataList = data.page.list;
           this.totalPage = data.page.totalCount;
@@ -192,7 +190,7 @@ export default {
             ),
             method: "post",
             data: this.$http.adornData({
-              // id: this.dataForm.id || undefined,
+              id: this.dataForm.id || undefined,
               username: this.dataForm.username,
               password: this.dataForm.password,
               truename: this.dataForm.truename,

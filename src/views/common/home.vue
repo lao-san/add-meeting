@@ -92,9 +92,9 @@ export default {
         })
       }).then(({ data }) => {
         if (data && data.code === 0) {
-          this.dataList = data.page.list;
-          this.totalPage = data.page.totalCount;
-          this.getHandleDataList(data.page.list);
+          window.console.log(data)
+          this.dataList = data.list;
+          this.getHandleDataList(data.list);
         } else {
           this.dataList = [];
           this.totalPage = 0;

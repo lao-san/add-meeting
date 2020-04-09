@@ -23,15 +23,24 @@
       style="width: 100%;"
     >
       <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
-      <!-- <el-table-column prop="id" header-align="center" align="center" label="会员id (会员表)"></el-table-column> -->
-      <el-table-column prop="username" header-align="center" align="center" label="用户名"></el-table-column>
+      <!-- <el-table-column prop="id" header-align="center" align="center" label="id"></el-table-column> -->
       <el-table-column prop="truename" header-align="center" align="center" label="姓名"></el-table-column>
+      <el-table-column prop="username" header-align="center" align="center" label="账号"></el-table-column>
       <el-table-column prop="organization" header-align="center" align="center" label="所属机构"></el-table-column>
       <el-table-column prop="position" header-align="center" align="center" label="职位"></el-table-column>
       <el-table-column prop="jobTitle" header-align="center" align="center" label="职称"></el-table-column>
       <el-table-column prop="phone" header-align="center" align="center" label="电话"></el-table-column>
       <el-table-column prop="email" header-align="center" align="center" label="邮箱"></el-table-column>
-      <el-table-column prop="createTime" header-align="center" align="center" label="创建时间"></el-table-column>
+      <el-table-column prop="meetingCounts" header-align="center" align="center" label="参会场次"></el-table-column>
+      <el-table-column prop="meetingName" header-align="center" align="center" label="最后参加会议"></el-table-column>
+      <el-table-column prop="servicerName" header-align="center" align="center" label="负责人"></el-table-column>
+      <el-table-column
+        prop="createTime"
+        header-align="center"
+        align="center"
+        width="160"
+        label="创建时间"
+      ></el-table-column>
       <el-table-column prop="isCheck" header-align="center" align="center" label="是否通过审核">
         <template slot-scope="scope">
           <el-button
@@ -70,7 +79,6 @@
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
   </div>
 </template>
-
 <script>
 import AddOrUpdate from "./member-add-or-update";
 export default {
@@ -140,7 +148,6 @@ export default {
         this.$refs.addOrUpdate.init(id);
       });
     },
-
     // 重置密码
     repasswordHandle(id) {
       this.$http({
@@ -201,7 +208,7 @@ export default {
       this.$http({
         url: this.$http.adornUrl("/admin/member/status"),
         method: "post",
-        data: this.$http.adornData({
+        data: this.$http.adornParams({
           id: id,
           status: status
         })
