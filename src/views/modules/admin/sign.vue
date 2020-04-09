@@ -57,25 +57,37 @@
         prop="typeAttenders"
         header-align="center"
         align="center"
-        label="参会类型">
+        label="用户参会类型">
       </el-table-column>
       <el-table-column
         prop="isPay"
         header-align="center"
         align="center"
         label="是否已缴费">
+        <template slot-scope="scope">
+          <span v-if="scope.row.isPay === 1">是</span>
+          <span v-else>否</span>
+        </template>
       </el-table-column>
       <el-table-column
         prop="status"
         header-align="center"
         align="center"
         label="签到状态">
+        <template slot-scope="scope">
+          <span v-if="scope.row.status === 1">已签到</span>
+          <span v-else>否</span>
+        </template>
       </el-table-column>
       <el-table-column
         prop="badge"
         header-align="center"
         align="center"
         label="胸卡">
+        <template slot-scope="scope">
+          <span v-if="scope.row.badge === 1">是</span>
+          <span v-else>否</span>
+        </template>
       </el-table-column>
       <el-table-column
         prop="servername"
