@@ -199,7 +199,6 @@ export default {
           meetingId: this.$route.params.id
         })
       }).then(({ data }) => {
-        // window.console.log(data);
         if (data && data.code === 0) {
           this.loading = false;
           this.meetingList = data.list;

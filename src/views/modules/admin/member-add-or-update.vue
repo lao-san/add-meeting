@@ -45,6 +45,7 @@
       <el-form-item label="职称" prop="jobTitle">
         <el-input v-model="dataForm.jobTitle" placeholder="职称"></el-input>
       </el-form-item>
+     
       <el-form-item label="电话" prop="phone">
         <el-input v-model="dataForm.phone" placeholder="电话"></el-input>
       </el-form-item>
@@ -144,7 +145,6 @@ export default {
   },
   methods: {
     init(id) {
-      window.console.log(id)
       this.dataForm.id = id || 0;
       if (this.dataForm.id === 0) {
         this.add = true;
