@@ -2,7 +2,7 @@
   <div class="ll-content">
     <h1>{{meetingData.nameCn}}</h1>
     <div class="box">
-      <div class="bgMeeting" :style="{ background: 'url(' + meetingData.titlePicture + ')' }"></div>
+      <div class="bgMeeting" :style="{ background: 'url(http://121.42.53.174:9008/static' + meetingData.titlePicture + ') 100% 100%' }"></div>
 
       <el-form label-width="200px">
         <el-form-item label="会议名称" class="fz_30">{{meetingData.nameCn}}</el-form-item>

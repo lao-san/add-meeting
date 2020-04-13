@@ -285,7 +285,7 @@ export default {
             method: "post",
             data: this.$http.adornData({
               id: this.dataForm.id || undefined,
-              meetingId: this.dataForm.meetingId,
+              meetingId: this.$route.params.id,
               memberId: this.dataForm.memberId,
               name: this.dataForm.name,
               organization: this.dataForm.organization,

@@ -1,13 +1,19 @@
 <template>
-  <el-col :span="4" style="margin-left:30px"  @click.native="handClick()" >
-    <el-card :body-style="{ padding: '8px' }" style="height:380px">
-      <div class="bg" :style="{backgroundImage: 'url(' + httpimage + ')', backgroundSize:'cover'}"></div>
+  <el-col :span="4" style="margin-left:30px">
+    <el-card :body-style="{ padding: '8px' }" style="height:400px">
+      <div
+        class="bg"
+        :style="{backgroundImage: 'url( http://121.42.53.174:9008/static' + image + ')', backgroundSize:'cover'}"
+        @click="handClick()"
+      ></div>
       <div style="padding: 14px;">
         <span style="font-size:20px">{{this.list.nameCn}}</span>
         <div class="bottom clearfix">
           <time class="time">{{this.list.address}}</time>
           <p class="time">举办时间:{{this.list.startTime}}</p>
-          <!-- <el-button type="text" class="button">操作按钮</el-button> -->
+          <el-button type="text" class="button" v-if="this.list.isCheck===0">发布</el-button>
+          <el-button type="text" class="button" v-if="this.list.isCheck===1">会议结束</el-button>
+          <el-button type="text" class="button" v-if="this.list.isCheck===2">会议结束</el-button>
         </div>
       </div>
     </el-card>
@@ -18,9 +24,9 @@ export default {
   name: "",
   data() {
     return {
-      id:'',
-      httpimage:
-        "http://a2.att.hudong.com/36/48/19300001357258133412489354717.jpg"
+      id: "",
+      httpimage: "",
+      image: []
     };
   },
   props: {
@@ -30,20 +36,29 @@ export default {
   computed: {},
   beforeMount() {},
   mounted() {
-    this.getMeetingId()
+    this.getMeetingId();
   },
   methods: {
-    handClick(){
-      this.$router.push({path:`/admin-meeting/${this.id}`})
+    handClick() {
+      this.$router.push({ path: `/admin-meeting/${this.id}` });
     },
     getMeetingId() {
-      this.id = this.list.id
+      this.id = this.list.id;
+      this.httpimage = this.list.titlePicture;
+      this.image =
+        this.httpimage.length === 1
+          ? this.httpimage
+          : this.httpimage.split(",").splice(0, 1).join();
     }
   },
   watch: {}
 };
 </script>
 <style scoped lang='scss'>
+.el-card {
+  position: relative;
+}
+
 .time {
   font-size: 13px;
   color: #999;
@@ -55,7 +70,10 @@ export default {
 }
 
 .button {
-  padding: 0;
+  position: absolute;
+  bottom: -2px;
+  right: 15px;
+  padding-top: 0px;
   float: right;
 }
 

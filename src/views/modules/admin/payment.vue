@@ -10,7 +10,7 @@
           v-if="isAuth('admin:payment:save')"
           type="primary"
           @click="addOrUpdateHandle()"
-        >新增</el-button> -->
+        >新增</el-button>-->
         <el-button
           v-if="isAuth('admin:payment:delete')"
           type="danger"
@@ -31,16 +31,26 @@
       <el-table-column prop="truename" header-align="center" align="center" label="缴费人"></el-table-column>
       <el-table-column prop="organization" header-align="center" align="center" label="所在机构"></el-table-column>
       <!-- <el-table-column prop="feeId" header-align="center" align="center" label="费用类型id"></el-table-column> -->
-      <el-table-column prop="payType" header-align="center" align="center" label="缴费方式"></el-table-column>
+      <el-table-column prop="payType" header-align="center" align="center" label="缴费方式">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.payType===1" type="success">线上缴费</el-tag>
+          <el-tag v-else="scope.row.payType===2">现场缴费</el-tag>
+        </template>
+      </el-table-column>
       <!-- <el-table-column prop="payOption" header-align="center" align="center" label="缴费项目"></el-table-column> -->
-      <el-table-column prop="isPay" header-align="center" align="center" label="是否付费"></el-table-column>
+      <el-table-column prop="isPay" header-align="center" align="center" label="是否付费">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.isPay===0" type="danger">否</el-tag>
+          <el-tag v-else="scope.row.isPay===1">是</el-tag>
+        </template>
+      </el-table-column>
       <!-- <el-table-column prop="taxTitle" header-align="center" align="center" label="发票抬头"></el-table-column>
-      <el-table-column prop="taxNumber" header-align="center" align="center" label="纳税人税号"></el-table-column> -->
+      <el-table-column prop="taxNumber" header-align="center" align="center" label="纳税人税号"></el-table-column>-->
       <el-table-column prop="phone" header-align="center" align="center" label="联系电话"></el-table-column>
       <!-- <el-table-column prop="bankAddrAccount" header-align="center" align="center" label="开户行及账号"></el-table-column> -->
       <!-- <el-table-column prop="taxAddress" header-align="center" align="center" label="邮寄地址"></el-table-column> -->
       <!-- <el-table-column prop="isCheck" header-align="center" align="center" label="确认是否已缴费"></el-table-column>
-      <el-table-column prop="taxType" header-align="center" align="center" label="发票类型0普1专"></el-table-column> -->
+      <el-table-column prop="taxType" header-align="center" align="center" label="发票类型0普1专"></el-table-column>-->
       <el-table-column prop="payTime" header-align="center" align="center" label="缴费时间"></el-table-column>
 
       <el-table-column fixed="right" header-align="center" align="center" width="150" label="操作">
@@ -73,7 +83,7 @@ export default {
         key: ""
       },
       dataList: [],
-      pageIndex: 1,
+      pageIndex: 0,
       pageSize: 10,
       totalPage: 0,
       dataListLoading: false,
@@ -168,6 +178,9 @@ export default {
           }
         });
       });
+    },
+    handClick(id) {
+      window.console.log(id);
     }
   }
 };
