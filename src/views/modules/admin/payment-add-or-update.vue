@@ -14,16 +14,16 @@
       <!-- <el-form-item label="订单号" prop="orderId">
         <el-input v-model="dataForm.orderId" placeholder="订单号"></el-input>
       </el-form-item>-->
-      <el-form-item label="参会人员" prop="attenders">
+      <el-form-item label="参会人员" prop="attendersId">
         <!-- <el-input v-model="dataForm.attendersId" placeholder="参会人员id"></el-input> -->
         <el-select
           style="width:220px"
-          v-model="dataForm.attenders"
+          v-model="dataForm.attendersId"
           filterable
           remote
           reserve-keyword
           placeholder="请输入关键词"
-          :remote-method="remoteMethod"
+          :remote-method="getPaymentByname"
           :loading="loading"
         >
           <el-option
@@ -118,72 +118,72 @@
 
 <script>
 export default {
-  data() {
+  data () {
     return {
       visible: false,
       dataForm: {
         id: 0,
-        attenders: "", //参会人员id
-        payTime: "", //付款时间
-        payType: "", //付款方式
-        payOption: "", //付款项目
-        feeId: "", //费用类型
-        money: "", //金额
-        isPay: "", //是否付款
-        taxType: "", //发票类型
-        taxTitle: "", //发票抬头
-        taxNumber: "", //发票号
-        addrPhone: "", //电话
-        bankAddrAccount: "", //开户行
-        taxAddress: "" //发票地址
+        attendersId: '', // 参会人员id
+        payTime: '', // 付款时间
+        payType: '', // 付款方式
+        payOption: '', // 付款项目
+        feeId: '', // 费用类型
+        money: '', // 金额
+        isPay: '', // 是否付款
+        taxType: '', // 发票类型
+        taxTitle: '', // 发票抬头
+        taxNumber: '', // 发票号
+        addrPhone: '', // 电话
+        bankAddrAccount: '', // 开户行
+        taxAddress: '' // 发票地址
       },
       dataRule: {
         orderId: [
-          { required: true, message: "订单号不能为空", trigger: "blur" }
+          { required: true, message: '订单号不能为空', trigger: 'blur' }
         ],
         attendersId: [
-          { required: true, message: "参会人员id不能为空", trigger: "blur" }
+          { required: true, message: '参会人员id不能为空', trigger: 'blur' }
         ],
         feeId: [
-          { required: true, message: "费用类型id不能为空", trigger: "blur" }
+          { required: true, message: '费用类型id不能为空', trigger: 'blur' }
         ],
         payTime: [
-          { required: true, message: "缴费时间不能为空", trigger: "blur" }
+          { required: true, message: '缴费时间不能为空', trigger: 'blur' }
         ],
         payType: [
-          { required: true, message: "缴费方式不能为空", trigger: "blur" }
+          { required: true, message: '缴费方式不能为空', trigger: 'blur' }
         ],
         payOption: [
-          { required: true, message: "缴费项目不能为空", trigger: "blur" }
+          { required: true, message: '缴费项目不能为空', trigger: 'blur' }
         ],
-        money: [{ required: true, message: "金额不能为空", trigger: "blur" }],
+        money: [{ required: true, message: '金额不能为空', trigger: 'blur' }],
         taxTitle: [
-          { required: true, message: "发票抬头不能为空", trigger: "blur" }
+          { required: true, message: '发票抬头不能为空', trigger: 'blur' }
         ],
         taxNumber: [
-          { required: true, message: "纳税人税号不能为空", trigger: "blur" }
+          { required: true, message: '纳税人税号不能为空', trigger: 'blur' }
         ],
         addrPhone: [
-          { required: true, message: "地址 电话不能为空", trigger: "blur" }
+          { required: true, message: '地址 电话不能为空', trigger: 'blur' }
         ],
         bankAddrAccount: [
-          { required: true, message: "开户行及账号不能为空", trigger: "blur" }
+          { required: true, message: '开户行及账号不能为空', trigger: 'blur' }
         ],
         taxAddress: [
-          { required: true, message: "邮寄地址不能为空", trigger: "blur" }
+          { required: true, message: '邮寄地址不能为空', trigger: 'blur' }
         ],
         isPay: [
-          { required: true, message: "确认是否已缴费不能为空", trigger: "blur" }
+          { required: true, message: '确认是否已缴费不能为空', trigger: 'blur' }
         ],
         createTime: [
-          { required: true, message: "创建时间不能为空", trigger: "blur" }
+          { required: true, message: '创建时间不能为空', trigger: 'blur' }
         ],
 
         meetingId: [
-          { required: true, message: "会议id不能为空", trigger: "blur" }
+          { required: true, message: '会议id不能为空', trigger: 'blur' }
         ],
         taxType: [
-          { required: true, message: "发票类型0普1专不能为空", trigger: "blur" }
+          { required: true, message: '发票类型0普1专不能为空', trigger: 'blur' }
         ]
       },
       loading: false,
@@ -192,75 +192,75 @@ export default {
       options: [],
       payTypeList: [
         {
-          value: "1",
-          label: "线上缴费"
+          value: '1',
+          label: '线上缴费'
         },
         {
-          value: "2",
-          label: "现场缴费"
+          value: '2',
+          label: '现场缴费'
         }
       ],
       typesoffeeList: [],
       option: [],
-      feeIdTypeList: [], //费用类型
-      option: [],
+      feeIdTypeList: [], // 费用类型
       page: 0,
       limit: 10,
       meetingId: this.$route.params.id
-    };
+    }
   },
-  created() {
-    this.getPaymentByname();
-    this.getTypesoffee();
+  created () {
+    // this.getPaymentByname()
+    this.getTypesoffee()
   },
   methods: {
-    init(id) {
-      this.dataForm.id = id || 0;
-      this.visible = true;
+    init (id) {
+      this.dataForm.id = id || 0
+      this.visible = true
       this.$nextTick(() => {
-        this.$refs["dataForm"].resetFields();
+        this.$refs['dataForm'].resetFields()
         if (this.dataForm.id) {
           this.$http({
             url: this.$http.adornUrl(`/admin/payment/info/${this.dataForm.id}`),
-            method: "get",
+            method: 'get',
             params: this.$http.adornParams()
           }).then(({ data }) => {
-            window.console.log(data);
+            window.console.log(data)
             if (data && data.code === 0) {
-              this.dataForm.orderId = data.payment.orderId;
-              this.dataForm.attenders = data.payment.attenders;
-              this.dataForm.feeId = data.payment.feeId;
-              this.dataForm.payTime = data.payment.payTime;
-              this.dataForm.payType = data.payment.payType;
-              this.dataForm.payOption = data.payment.payOption;
-              this.dataForm.money = data.payment.money;
-              this.dataForm.taxTitle = data.payment.taxTitle;
-              this.dataForm.taxNumber = data.payment.taxNumber;
-              this.dataForm.addrPhone = data.payment.addrPhone;
-              this.dataForm.bankAddrAccount = data.payment.bankAddrAccount;
-              this.dataForm.taxAddress = data.payment.taxAddress;
-              this.dataForm.isCheck = data.payment.isCheck;
-              this.dataForm.createTime = data.payment.createTime;
-              this.dataForm.isPay = data.payment.isPay;
-              this.dataForm.meetingId = data.payment.meetingId;
-              this.dataForm.taxType = data.payment.taxType;
+              this.options = [{'value': data.attenders.id, 'label': data.attenders.truename}]
+              this.dataForm.orderId = data.payment.orderId
+              this.dataForm.attendersId = data.payment.attendersId
+              this.dataForm.feeId = data.payment.feeId
+              this.dataForm.payTime = data.payment.payTime
+              this.dataForm.payType = data.payment.payType
+              this.dataForm.payOption = data.payment.payOption
+              this.dataForm.money = data.payment.money
+              this.dataForm.taxTitle = data.payment.taxTitle
+              this.dataForm.taxNumber = data.payment.taxNumber
+              this.dataForm.addrPhone = data.payment.addrPhone
+              this.dataForm.bankAddrAccount = data.payment.bankAddrAccount
+              this.dataForm.taxAddress = data.payment.taxAddress
+              this.dataForm.isCheck = data.payment.isCheck
+              this.dataForm.createTime = data.payment.createTime
+              this.dataForm.isPay = data.payment.isPay
+              this.dataForm.meetingId = data.payment.meetingId
+              this.dataForm.taxType = data.payment.taxType
             }
-          });
+          })
         }
-      });
+      })
     },
     // 表单提交
-    dataFormSubmit() {
-      this.$refs["dataForm"].validate(valid => {
+    dataFormSubmit () {
+      this.$refs['dataForm'].validate(valid => {
         if (valid) {
           this.$http({
             url: this.$http.adornUrl(
-              `/admin/payment/${!this.dataForm.id ? "save" : "update"}`
+              `/admin/payment/${!this.dataForm.id ? 'save' : 'update'}`
             ),
-            method: "post",
+            method: 'post',
             data: this.$http.adornData({
               id: this.dataForm.id || undefined,
-              attenders: this.dataForm.attenders,
+              attendersId: this.dataForm.attendersId,
               feeId: this.dataForm.feeId,
               payTime: this.dataForm.payTime,
               payType: this.dataForm.payType,
@@ -279,72 +279,74 @@ export default {
           }).then(({ data }) => {
             if (data && data.code === 0) {
               this.$message({
-                message: "操作成功",
-                type: "success",
+                message: '操作成功',
+                type: 'success',
                 duration: 1500,
                 onClose: () => {
-                  this.visible = false;
-                  this.$emit("refreshDataList");
+                  this.visible = false
+                  this.$emit('refreshDataList')
                 }
-              });
+              })
             } else {
-              this.$message.error(data.msg);
+              this.$message.error(data.msg)
             }
-          });
+          })
         }
-      });
+      })
     },
-    getPaymentByname(name = "") {
-      this.loading = true;
+    getPaymentByname (name = '') {
+      this.loading = true
       this.$http({
         url: this.$http.adornUrl(`/admin/attenders/selectbyname`),
-        method: "get",
+        method: 'get',
         params: this.$http.adornParams({
           name: name,
           meetingId: this.$route.params.id
         })
       }).then(({ data }) => {
         if (data) {
-          this.loading = false;
-          this.meetingList = data.list;
-          this.list = this.meetingList.map(item => {
-            return { value: `${item.id}`, label: `${item.name}` };
-          });
+          this.loading = false
+          this.options = data.list.map(item => {
+            return {
+              value: item.id,
+              label: item.name
+            }
+          })
         }
-      });
+      })
     },
-    remoteMethod(query) {
-      if (query !== "") {
-        this.loading = true;
-        setTimeout(() => {
-          this.loading = false;
-          this.options = this.list.filter(item => {
-            return item.label.toLowerCase().indexOf(query.toLowerCase()) > -1;
-          });
-        }, 300);
-      } else {
-        this.options = [];
-      }
-    },
-    getTypesoffee() {
+    // remoteMethod (query) {
+    //   if (query !== '') {
+    //     this.loading = true
+    //     setTimeout(() => {
+    //       this.loading = false
+    //       this.options = this.list.filter(item => {
+    //         return item.label.toLowerCase().indexOf(query.toLowerCase()) > -1
+    //       })
+    //     }, 300)
+    //   } else {
+    //     this.options = []
+    //   }
+    // },
+    getTypesoffee () {
       this.$http({
         url: this.$http.adornUrl(
           `/admin/typesoffee/listbymid/${this.meetingId}`
         ),
-        methods: "get",
+        methods: 'get',
         params: {}
       }).then(({ data }) => {
         if (data && data.code === 0) {
-          this.typesoffeeList = data.list;
+          this.typesoffeeList = data.list
           this.option = this.typesoffeeList.map(item => {
             return {
               value: item.id,
               label: item.name
-            };
-          });
+            }
+          })
         }
-      });
+      })
     }
   }
-};
+}
 </script>

@@ -113,7 +113,6 @@ export default {
         : 0;
       if (this.meetingId !== 0) {
         this.menuList = JSON.parse(sessionStorage.getItem("menuList") || "[]");
-        console.log(this.menuList);
       } else {
         let mList = JSON.parse(sessionStorage.getItem("menuList") || "[]");
         let myList = [];

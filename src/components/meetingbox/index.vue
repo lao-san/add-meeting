@@ -26,14 +26,16 @@ export default {
     return {
       id: "",
       httpimage: "",
-      image: []
+      image: null
     };
   },
   props: {
     list: Object
   },
   components: {},
-  computed: {},
+  computed: {
+    imageNull() {}
+  },
   beforeMount() {},
   mounted() {
     this.getMeetingId();
@@ -45,10 +47,14 @@ export default {
     getMeetingId() {
       this.id = this.list.id;
       this.httpimage = this.list.titlePicture;
-      this.image =
-        this.httpimage.length === 1
-          ? this.httpimage
-          : this.httpimage.split(",").splice(0, 1).join();
+      if (this.httpimage.includes(",")) {
+        this.image = this.httpimage
+          .split(",")
+          .splice(0, 1)
+          .join();
+      } else {
+        this.image = this.httpimage;
+      }
     }
   },
   watch: {}

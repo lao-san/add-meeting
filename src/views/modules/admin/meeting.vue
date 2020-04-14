@@ -2,8 +2,7 @@
   <div class="ll-content">
     <h1>{{meetingData.nameCn}}</h1>
     <div class="box">
-      <div class="bgMeeting" :style="{ background: 'url(http://121.42.53.174:9008/static' + meetingData.titlePicture + ') 100% 100%' }"></div>
-
+      <img :src="imageNull" class="bgMeeting" />
       <el-form label-width="200px">
         <el-form-item label="会议名称" class="fz_30">{{meetingData.nameCn}}</el-form-item>
         <el-form-item label="会议时间">{{meetingData.startTime}}</el-form-item>
@@ -31,11 +30,22 @@ export default {
       id: "", //会议id
       meetingData: {},
       subjectsList: [],
-      industries: []
+      industries: [],
+      image: ""
     };
   },
   components: {},
-  computed: {},
+  computed: {
+    imageNull() {
+      return this.image.includes(",")
+        ? "http://121.42.53.174:9008/static" +
+            this.image
+              .split(",")
+              .splice(0, 1)
+              .join()
+        : "http://121.42.53.174:9008/static" + this.image;
+    }
+  },
   beforeMount() {},
   created() {},
   activated() {
@@ -50,11 +60,13 @@ export default {
           method: "get",
           params: this.$http.adornParams()
         }).then(res => {
-          // window.console.log(res);
           if (res.data && res.data.code === 0) {
+            window.console.log(res.data);
             this.meetingData = res.data.meeting;
-            this.subjectsList = res.data.meeting.subjects.split(",");
             this.industries = res.data.meeting.industries.split(",");
+            this.image = res.data.meeting.titlePicture;
+            this.subjectsList = res.data.meeting.subjects.split(",");
+            
           }
         });
       }
@@ -73,6 +85,7 @@ export default {
     margin: 0 auto;
     // border: 1px solid red;
     .bgMeeting {
+      display: block;
       width: 630px;
       height: 300px;
       // background-color: red;

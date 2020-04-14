@@ -17,8 +17,8 @@
       <el-form-item label="所属机构" prop="organization">
         <el-input v-model="dataForm.organization" placeholder="所属机构(单位名称、公司名称)"></el-input>
       </el-form-item>
-      <el-form-item label="职位" prop="positionId">
-        <el-input v-model="dataForm.positionId" placeholder="职位"></el-input>
+      <el-form-item label="职位" prop="position">
+        <el-input v-model="dataForm.position" placeholder="职位"></el-input>
       </el-form-item>
       <el-form-item label="职称" prop="jobTitle">
         <el-input v-model="dataForm.jobTitle" placeholder="职称"></el-input>
@@ -90,12 +90,12 @@
           value-format="yyyy-MM-dd HH:mm:ss"
         ></el-date-picker>
       </el-form-item> -->
-      <el-form-item label="创建者" prop="creater">
+      <!-- <el-form-item label="创建者" prop="creater">
         <el-input v-model="dataForm.creater" placeholder="创建者"></el-input>
       </el-form-item>
       <el-form-item label="修改者" prop="modifier">
         <el-input v-model="dataForm.modifier" placeholder="修改者"></el-input>
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="备注" prop="note">
         <el-input
           type="textarea"
@@ -124,7 +124,7 @@ export default {
         memberId: "",
         name: "",
         organization: "",
-        positionId: "",
+        position: "",
         jobTitle: "",
         phone: "",
         email: "",
@@ -140,9 +140,8 @@ export default {
         regflag: "",
         createTime: "",
         modifyTime: "",
-        creater: "",
-        modifier: "",
-        isDel: ""
+        // creater: "",
+        // modifier: "",
       },
       dataRule: {
         meetingId: [
@@ -159,7 +158,7 @@ export default {
             trigger: "blur"
           }
         ],
-        positionId: [
+        position: [
           { required: true, message: "职位不能为空", trigger: "blur" }
         ],
         jobTitle: [
@@ -250,7 +249,7 @@ export default {
               this.dataForm.memberId = data.attenders.memberId;
               this.dataForm.name = data.attenders.name;
               this.dataForm.organization = data.attenders.organization;
-              this.dataForm.positionId = data.attenders.positionId;
+              this.dataForm.position = data.attenders.position;
               this.dataForm.jobTitle = data.attenders.jobTitle;
               this.dataForm.phone = data.attenders.phone;
               this.dataForm.email = data.attenders.email;
@@ -289,7 +288,7 @@ export default {
               memberId: this.dataForm.memberId,
               name: this.dataForm.name,
               organization: this.dataForm.organization,
-              positionId: this.dataForm.positionId,
+              position: this.dataForm.position,
               jobTitle: this.dataForm.jobTitle,
               phone: this.dataForm.phone,
               email: this.dataForm.email,
