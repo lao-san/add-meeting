@@ -386,7 +386,6 @@ export default {
       console.log(file, fileList);
     },
     successHandle(response, file) {
-      window.console.log(response);
       if (response && response.code === 0) {
         this.titlePictureList.push(response.picname);
         // window.console.log(this.titlePictureList.join());

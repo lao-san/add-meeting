@@ -50,20 +50,23 @@
       </el-form-item>
       <el-form-item label="负责人" prop="servicer">
         <!-- <el-input v-model="dataForm.servicer" placeholder="负责人"></el-input> -->
-        <el-select
-          v-model="dataForm.servicer"
-          filterable
-          remote
-          reserve-keyword
-          placeholder="请输入关键词"
-          :remote-method="remoteMethod"
-          :loading="loading"
-        >
+        <el-select v-model="dataForm.servicer" filterable placeholder="请选择">
           <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
+            v-for="item in employeeList"
+            :key="item.id"
+            :label="item.truename"
+            :value="item.id"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="用户类型" prop="typeId">
+        <!-- <el-input v-model="dataForm.servicer" placeholder="负责人"></el-input> -->
+        <el-select v-model="dataForm.typeId" filterable placeholder="请选择">
+          <el-option
+            v-for="item in typesofattendersList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
           ></el-option>
         </el-select>
       </el-form-item>
@@ -89,13 +92,13 @@
           placeholder="选择日期时间"
           value-format="yyyy-MM-dd HH:mm:ss"
         ></el-date-picker>
-      </el-form-item> -->
+      </el-form-item>-->
       <!-- <el-form-item label="创建者" prop="creater">
         <el-input v-model="dataForm.creater" placeholder="创建者"></el-input>
       </el-form-item>
       <el-form-item label="修改者" prop="modifier">
         <el-input v-model="dataForm.modifier" placeholder="修改者"></el-input>
-      </el-form-item> -->
+      </el-form-item>-->
       <el-form-item label="备注" prop="note">
         <el-input
           type="textarea"
@@ -137,9 +140,8 @@ export default {
         note: "",
         account: "",
         emailLx: "",
-        regflag: "",
-        createTime: "",
-        modifyTime: "",
+        regflag: ""
+
         // creater: "",
         // modifier: "",
       },
@@ -223,12 +225,12 @@ export default {
         ]
       },
       employeeList: [],
-      list: [],
-      options: []
+      typesofattendersList: []
     };
   },
   created() {
     this.getEmployee();
+    this.getTypesofattenders();
   },
   methods: {
     init(id) {
@@ -338,24 +340,22 @@ export default {
         if (data) {
           this.loading = false;
           this.employeeList = data;
-          this.list = this.employeeList.map(item => {
-            return { value: `${item.id}`, label: `${item.truename}` };
-          });
         }
       });
     },
-    remoteMethod(query) {
-      if (query !== "") {
-        this.loading = true;
-        setTimeout(() => {
-          this.loading = false;
-          this.options = this.list.filter(item => {
-            return item.label.toLowerCase().indexOf(query.toLowerCase()) > -1;
-          });
-        }, 300);
-      } else {
-        this.options = [];
-      }
+    //获取用户类型信息
+    getTypesofattenders() {
+      this.$http({
+        url: this.$http.adornUrl(
+          `/admin/typesofattenders/listbymid/${this.$route.params.id}`
+        ),
+        method: "get"
+      }).then(({ data }) => {
+        if (data && data.code === 0) {
+          this.typesofattendersList = data.list;
+        }
+        window.console.log(data.list);
+      });
     }
   }
 };

@@ -27,11 +27,10 @@
         <el-upload
           class="upload-demo"
           ref="upload"
-          action="https://jsonplaceholder.typicode.com/posts/"
-          :on-preview="handlePreview"
-          :on-remove="handleRemove"
-          :file-list="fileList"
+          :action="upload_url"
+          :on-success="successHandle"
           :auto-upload="false"
+          name="upload_file"
         >
           <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
           <el-button
@@ -71,18 +70,8 @@ export default {
         summary: [{ required: true, message: "摘要不能为空", trigger: "blur" }]
       },
       options: [],
-      fileList: [
-        {
-          name: "food.jpeg",
-          url:
-            "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100"
-        },
-        {
-          name: "food2.jpeg",
-          url:
-            "https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100"
-        }
-      ]
+      upload_url: "",
+      successNum: 0
     };
   },
   created() {
@@ -110,6 +99,9 @@ export default {
           });
         }
       });
+      this.upload_url = this.$http.adornUrl(
+        `/sys/filemanager/uploadfile?token=${this.$cookie.get("token")}`
+      );
     },
     // 表单提交
     dataFormSubmit() {
@@ -161,23 +153,10 @@ export default {
     },
     paperUpload() {},
     submitUpload() {
-      this.$http({
-        url: this.$http.adornUrl("/renren-fast/sys/filemanager/uploadfile"),
-        method: "post",
-        data: this.$http.adornData({
-          upload_file: "",
-          useoldname: ""
-        })
-      }).then(res => {
-        window.console.log(res);
-        this.$refs.upload.submit();
-      });
+      this.$refs.upload.submit();
     },
-    handleRemove(file, fileList) {
-      console.log(file, fileList); //删除信息
-    },
-    handlePreview(file) {
-      console.log(file); //上传后信息
+    successHandle(response) {
+      window.console.log(response)
     }
   }
 };

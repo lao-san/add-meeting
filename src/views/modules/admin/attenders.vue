@@ -29,12 +29,12 @@
       <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
       <el-table-column prop="name" header-align="center" align="center" label="姓名"></el-table-column>
       <el-table-column prop="organization" header-align="center" align="center" label="所属机构"></el-table-column>
-      <el-table-column prop="position" header-align="center" align="center" label="职位"></el-table-column>
-      <el-table-column prop="jobTitle" header-align="center" align="center" label="职称"></el-table-column>
-      <el-table-column prop="phone" header-align="center" align="center" label="电话"></el-table-column>
-      <el-table-column prop="email" header-align="center" align="center" label="邮箱"></el-table-column>
-      <el-table-column prop="officephone" header-align="center" align="center" label="办公电话"></el-table-column>
-      <el-table-column prop="intention" header-align="center" align="center" label="参会意向">
+      <!-- <el-table-column prop="position" header-align="center" align="center" label="职位"></el-table-column>
+      <el-table-column prop="jobTitle" header-align="center" align="center" label="职称"></el-table-column>-->
+      <!-- <el-table-column prop="phone" header-align="center" align="center" label="电话"></el-table-column> -->
+      <!-- <el-table-column prop="email" header-align="center" align="center" label="邮箱"></el-table-column> -->
+      <!-- <el-table-column prop="officephone" header-align="center" align="center" label="办公电话"></el-table-column> -->
+      <!-- <el-table-column prop="intention" header-align="center" align="center" label="参会意向">
         <template slot-scope="scope">
           <el-tag v-if="scope.row.intention===0" type="danger">否</el-tag>
           <el-tag v-else="scope.row.intention===1">是</el-tag>
@@ -47,11 +47,43 @@
         </template>
       </el-table-column>
       <el-table-column prop="transfer" header-align="center" align="center" label="接送要求">
-         <template slot-scope="scope">
+        <template slot-scope="scope">
           <el-tag v-if="scope.row.transfer===0" type="danger">否</el-tag>
           <el-tag v-else="scope.row.transfer===1">是</el-tag>
         </template>
+      </el-table-column>-->
+      <el-table-column prop="intention" header-align="center" align="center" label="参会意向">
+        <template slot-scope="scope">
+          <el-button
+            v-if="scope.row.intention===1"
+            type="success"
+            @click="changeStatus(scope.row.id, 'intention', 0)"
+          >是</el-button>
+          <el-button v-else @click="changeStatus(scope.row.id, 'intention', 1)" >否</el-button>
+        </template>
       </el-table-column>
+      <el-table-column prop="room" header-align="center" align="center" label="住宿要求">
+        <template slot-scope="scope">
+          <el-button
+            v-if="scope.row.room===1"
+            type="success"
+            @click="changeStatus(scope.row.id, 'room', 0)"
+          >是</el-button>
+          <el-button v-else @click="changeStatus(scope.row.id, 'room', 1)" >否</el-button>
+        </template>
+      </el-table-column>
+      <el-table-column prop="transfer" header-align="center" align="center" label="接送要求">
+        <template slot-scope="scope">
+          <el-button
+            v-if="scope.row.transfer===1"
+            type="success"
+            @click="changeStatus(scope.row.id, 'transfer', 0)"
+          >是</el-button>
+          <el-button v-else @click="changeStatus(scope.row.id, 'transfer', 1) " >否</el-button>
+        </template>
+      </el-table-column>
+      <el-table-column prop="transfer" header-align="center" align="center" label="用户类型"></el-table-column>
+      <el-table-column prop="servicer" header-align="center" align="center" label="负责人"></el-table-column>
       <el-table-column prop="note" header-align="center" align="center" label="备注"></el-table-column>
       <!-- <el-table-column
         prop="account"
@@ -205,8 +237,38 @@ export default {
         });
       });
     },
-    changeStatus(id) {
-      window.console.log(id);
+    changeStatus(id, column, value) {
+      console.log(id);
+      // console.log(obj)
+      this.$http({
+        url: this.$http.adornUrl("/admin/attenders/status"),
+        method: "post",
+        data: this.$http.adornData({
+          id: id,
+          column: column,
+          value: value
+        })
+      }).then(({ data }) => {
+        if (data && data.code === 0) {
+          this.$message({
+            message: "操作成功",
+            type: "success",
+            duration: 500,
+            onClose: () => {
+              //  this.getDataList()
+              var dList = this.dataList;
+              dList.forEach(element => {
+                if (element.id === id) {
+                  element[column] = value;
+                }
+              });
+              this.dataList = dList;
+            }
+          });
+        } else {
+          this.$message.error(data.msg);
+        }
+      });
     }
   }
 };
