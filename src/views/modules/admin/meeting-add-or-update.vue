@@ -361,10 +361,10 @@ export default {
             })
           }).then(({ data }) => {
             if (data && data.code === 0) {
-              this.subjects = "";
-              this.titlePictureList = "";
-              this.industry = "";
-              this.typesofattender = "";
+              this.subjects = [];
+              this.titlePictureList = [];
+              this.industry = [];
+              this.typesofattender = [];
               this.$message({
                 message: "操作成功",
                 type: "success",
@@ -388,14 +388,6 @@ export default {
     successHandle(response, file) {
       if (response && response.code === 0) {
         this.titlePictureList.push(response.picname);
-        // window.console.log(this.titlePictureList.join());
-        // if (response) {
-        //   this.dataForm.titlePicture = response.thumb;
-        //   // this.showimg = "http://121.42.53.174:9008/static" + response.thumb;
-        // } else {
-        //   // this.showimg = "http://121.42.53.174:9008/static" + response.picname;
-        //   this.dialogVisible = true;
-        // }
       } else {
         this.$message.error(response.msg);
       }

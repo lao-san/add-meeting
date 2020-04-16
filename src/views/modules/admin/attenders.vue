@@ -59,7 +59,7 @@
             type="success"
             @click="changeStatus(scope.row.id, 'intention', 0)"
           >是</el-button>
-          <el-button v-else @click="changeStatus(scope.row.id, 'intention', 1)" >否</el-button>
+          <el-button v-else @click="changeStatus(scope.row.id, 'intention', 1)">否</el-button>
         </template>
       </el-table-column>
       <el-table-column prop="room" header-align="center" align="center" label="住宿要求">
@@ -69,7 +69,7 @@
             type="success"
             @click="changeStatus(scope.row.id, 'room', 0)"
           >是</el-button>
-          <el-button v-else @click="changeStatus(scope.row.id, 'room', 1)" >否</el-button>
+          <el-button v-else @click="changeStatus(scope.row.id, 'room', 1)">否</el-button>
         </template>
       </el-table-column>
       <el-table-column prop="transfer" header-align="center" align="center" label="接送要求">
@@ -79,7 +79,7 @@
             type="success"
             @click="changeStatus(scope.row.id, 'transfer', 0)"
           >是</el-button>
-          <el-button v-else @click="changeStatus(scope.row.id, 'transfer', 1) " >否</el-button>
+          <el-button v-else @click="changeStatus(scope.row.id, 'transfer', 1) ">否</el-button>
         </template>
       </el-table-column>
       <el-table-column prop="transfer" header-align="center" align="center" label="用户类型"></el-table-column>

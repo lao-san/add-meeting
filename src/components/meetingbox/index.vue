@@ -11,9 +11,22 @@
         <div class="bottom clearfix">
           <time class="time">{{this.list.address}}</time>
           <p class="time">举办时间:{{this.list.startTime}}</p>
-          <el-button type="text" class="button" v-if="this.list.isCheck===0">发布</el-button>
-          <el-button type="text" class="button" v-if="this.list.isCheck===1">会议结束</el-button>
-          <el-button type="text" class="button" v-if="this.list.isCheck===2">会议结束</el-button>
+          <el-button
+            type="text"
+            class="button"
+            v-if="this.list.isCheck===0"
+            @click="status"
+            style="margin-right:50px"
+          >发布</el-button>
+          <el-button type="text" class="button" v-if="this.list.isCheck===1" @click="status">结束会议</el-button>
+          <el-button
+            type="text"
+            class="button"
+            v-if="this.list.isCheck===0||this.list.isCheck===2"
+            style="color:red"
+            @click="delMeeting"
+          >删除</el-button>
+          <!-- <el-button type="text" class="button" @click="handClick" style="margin-right:150px">传值</el-button> -->
         </div>
       </div>
     </el-card>
@@ -55,6 +68,40 @@ export default {
       } else {
         this.image = this.httpimage;
       }
+    },
+    //修改状态
+    status() {
+      this.$http({
+        url: this.$http.adornUrl("/admin/meeting/status"),
+        method: "post",
+        data: {
+          id: this.list.id,
+          status: this.list.isCheck === 0 ? 1 : 2
+        }
+      }).then(({ data }) => {
+        if (data) {
+          this.$emit("statusMeeting");
+        } else {
+          window.console.log(data);
+        }
+      });
+    },
+    //删除
+    delMeeting() {
+      let arr = [];
+      arr[0] = this.list.id;
+      this.$http({
+        url: this.$http.adornUrl("/admin/meeting/delete"),
+        method: "post",
+        data: this.$http.adornData(arr, false)
+      })
+        .then(res => {
+          window.console.log(res);
+          this.$emit("statusMeeting");
+        })
+        .catch(err => {
+          window.console.log(err);
+        });
     }
   },
   watch: {}

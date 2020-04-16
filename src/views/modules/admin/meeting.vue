@@ -1,5 +1,5 @@
 <template>
-  <div class="ll-content">
+  <div class="ll-content" v-loading="loading">
     <h1>{{meetingData.nameCn}}</h1>
     <div class="box">
       <img :src="imageNull" class="bgMeeting" />
@@ -31,7 +31,8 @@ export default {
       meetingData: {},
       subjectsList: [],
       industries: [],
-      image: ""
+      image: "",
+      loading: false
     };
   },
   components: {},
@@ -53,6 +54,7 @@ export default {
   },
   methods: {
     getMeeting() {
+      this.loading = true;
       this.id = this.$route.params.id;
       if (this.id) {
         this.$http({
@@ -61,12 +63,12 @@ export default {
           params: this.$http.adornParams()
         }).then(res => {
           if (res.data && res.data.code === 0) {
-            window.console.log(res.data);
+            window.console.log(res.data.meeting);
             this.meetingData = res.data.meeting;
             this.industries = res.data.meeting.industries.split(",");
             this.image = res.data.meeting.titlePicture;
             this.subjectsList = res.data.meeting.subjects.split(",");
-            
+            this.loading = false;
           }
         });
       }

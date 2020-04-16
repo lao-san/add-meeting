@@ -1,6 +1,6 @@
 
 <template>
-  <div class="mod-config">
+  <div class="mod-config" v-loading="dataListLoading">
     <el-row>
       <el-col :span="6">
         <div class="grid-content bg-purple-light">
@@ -18,7 +18,14 @@
           <h2>未发布中的会议</h2>
         </div>
       </el-col>
-      <meeting-box v-for="item in unpublished" :key="item.id" :list="item" style="margin-top:10px;"></meeting-box>
+
+      <meeting-box
+        v-for="item in unpublished"
+        :key="item.id"
+        :list="item"
+        style="margin-top:10px;"
+        @statusMeeting="childrenStatus"
+      ></meeting-box>
     </el-row>
     <el-row>
       <el-col :span="24">
@@ -28,7 +35,13 @@
       </el-col>
     </el-row>
     <el-row>
-      <meeting-box v-for="item in release" :key="item.id" :list="item" style="margin-top:20px;"></meeting-box>
+      <meeting-box
+        v-for="item in release"
+        :key="item.id"
+        :list="item"
+        style="margin-top:20px;"
+        @statusMeeting="childrenStatus"
+      ></meeting-box>
     </el-row>
     <el-row>
       <el-col :span="24">
@@ -38,10 +51,21 @@
       </el-col>
     </el-row>
     <el-row>
-      <meeting-box v-for="item in delRelease" :key="item.id" :list="item" style="margin-top:20px;"></meeting-box>
+      <meeting-box
+        v-for="item in delRelease"
+        :key="item.id"
+        :list="item"
+        style="margin-top:20px;"
+        @statusMeeting="childrenStatus"
+      ></meeting-box>
     </el-row>
     <!-- 弹窗, 新增 / 修改 -->
-    <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
+    <add-or-update
+      v-if="addOrUpdateVisible"
+      ref="addOrUpdate"
+      @refreshDataList="getDataList"
+      :key="timer"
+    ></add-or-update>
   </div>
 </template>
 
@@ -65,7 +89,8 @@ export default {
       dataListSelections: [],
       addOrUpdateVisible: false,
       meetingId: "",
-      reFresh: true
+      reFresh: true,
+      timer: "" //重新加载子组件
     };
   },
   components: {
@@ -92,7 +117,7 @@ export default {
         })
       }).then(({ data }) => {
         if (data && data.code === 0) {
-          window.console.log(data)
+          window.console.log(data);
           this.dataList = data.list;
           this.getHandleDataList(data.list);
         } else {
@@ -138,6 +163,8 @@ export default {
     },
     // 新增 / 修改
     addOrUpdateHandle(id) {
+      //重新加载子组件
+      this.timer = new Date().getTime();
       this.addOrUpdateVisible = true;
       this.$nextTick(() => {
         this.$refs.addOrUpdate.init(id);
@@ -183,6 +210,13 @@ export default {
     getMeetingListId(data) {
       this.meetingId = data;
       console.log(this.meetingId);
+    },
+    //接受组件修改状态 刷新视图
+    childrenStatus(msg) {
+      this.unpublished = [];
+      this.release = [];
+      this.delRelease = [];
+      this.getDataList();
     }
   }
 };

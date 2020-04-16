@@ -11,19 +11,8 @@
       @keyup.enter.native="dataFormSubmit()"
       label-width="100px"
     >
-      <!-- <el-form-item label="会议id" prop="meetingId">
-        <el-input v-model="dataForm.meetingId" placeholder="会议id"></el-input>
-      </el-form-item>-->
       <el-form-item label="参会人员" prop="attendersId">
-        <!-- <el-select v-model="dataForm.attendersId" filterable placeholder="请选择">
-          <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          ></el-option>
-        </el-select>-->
-        <el-select
+        <!-- <el-select
           v-model="dataForm.attendersId"
           filterable
           remote
@@ -38,8 +27,15 @@
             :label="item.label"
             :value="item.value"
           ></el-option>
+        </el-select>-->
+        <el-select v-model="dataForm.attendersId" filterable placeholder="请选择">
+          <el-option
+            v-for="item in meetingList"
+            :key="item.id"
+            :label="item.name"
+            :value="item.id"
+          ></el-option>
         </el-select>
-
         <!-- <el-input v-model="dataForm.attendersId" placeholder="演讲人id"></el-input> -->
       </el-form-item>
       <el-form-item label="题目" prop="topic">
@@ -113,9 +109,7 @@ export default {
         ]
       },
       options: [],
-      loading: false,
       meetingId: 0,
-      list: [],
       meetingList: []
     };
   },
@@ -146,7 +140,7 @@ export default {
               this.dataForm.summary = data.lecture.summary;
               !this.dataForm.id
                 ? this.dataForm.attendersId
-                : this.dataForm.attendersId = "";
+                : (this.dataForm.attendersId = "");
             }
           });
         }
@@ -190,7 +184,6 @@ export default {
     },
     // 通过姓名模糊查询参会人员id
     getAttendersIdByname(name = "") {
-      this.loading = true;
       this.$http({
         url: this.$http.adornUrl(`/admin/attenders/selectbyname`),
         method: "get",
@@ -200,26 +193,9 @@ export default {
         })
       }).then(({ data }) => {
         if (data && data.code === 0) {
-          this.loading = false;
           this.meetingList = data.list;
-          this.list = this.meetingList.map(item => {
-            return { value: `${item.id}`, label: `${item.name}` };
-          });
         }
       });
-    },
-    remoteMethod(query) {
-      if (query !== "") {
-        this.loading = true;
-        setTimeout(() => {
-          this.loading = false;
-          this.options = this.list.filter(item => {
-            return item.label.toLowerCase().indexOf(query.toLowerCase()) > -1;
-          });
-        }, 300);
-      } else {
-        this.options = [];
-      }
     }
   }
 };

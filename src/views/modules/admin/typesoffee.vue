@@ -1,5 +1,5 @@
 <template>
-  <div class="typesoffeeContent">
+  <div class="typesoffeeContent" v-loading="loading">
     <el-form>
       <el-form-item label="注册费用信息"></el-form-item>
       <el-form-item>
@@ -76,7 +76,8 @@ export default {
         account: ""
       },
       moneyaccount: {}, //注册类型返回数据
-      show: true
+      show: true,
+      loading: false
     };
   },
   components: {},
@@ -167,6 +168,7 @@ export default {
     },
     //提交对公收款账户信息
     pushMoneyaccount() {
+      this.loading = true;
       this.$http({
         url: this.$http.adornUrl("/admin/moneyaccount/addorupdate"),
         method: "post",
@@ -202,6 +204,7 @@ export default {
       }).then(({ data }) => {
         if (data && data.code === 0) {
           this.moneyaccount = data.moneyAccount;
+          this.loading = false;
         }
       });
     }
