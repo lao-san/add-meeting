@@ -1,6 +1,6 @@
 <template>
   <div class="typesoffeeContent" v-loading="loading">
-    <el-form>
+    <el-form :model="dataForm">
       <el-form-item label="注册费用信息"></el-form-item>
       <el-form-item>
         <el-input style="width:400px" placeholder="请输入级别类型" v-model="dataForm.name"></el-input>
@@ -83,7 +83,8 @@ export default {
   components: {},
   computed: {},
   beforeMount() {},
-  mounted() {
+  created() {},
+  activated() {
     this.getDataList();
     this.getMoneyaccount();
   },
@@ -107,8 +108,8 @@ export default {
             onClose: () => {}
           });
           this.getDataList();
-          this.dataForm.name = "";
-          this.dataForm.money = "";
+          // this.dataForm.name = "";
+          // this.dataForm.money = "";
         } else {
           this.$message.error(data.msg);
         }
@@ -203,6 +204,8 @@ export default {
         methods: "get"
       }).then(({ data }) => {
         if (data && data.code === 0) {
+          window.console.log(data);
+          data.moneyAccount === null ? (this.show = false) : (this.show = true);
           this.moneyaccount = data.moneyAccount;
           this.loading = false;
         }

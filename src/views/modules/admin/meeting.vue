@@ -63,7 +63,6 @@ export default {
           params: this.$http.adornParams()
         }).then(res => {
           if (res.data && res.data.code === 0) {
-            window.console.log(res.data.meeting);
             this.meetingData = res.data.meeting;
             this.industries = res.data.meeting.industries.split(",");
             this.image = res.data.meeting.titlePicture;

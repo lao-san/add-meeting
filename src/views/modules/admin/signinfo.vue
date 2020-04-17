@@ -6,8 +6,17 @@
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
-        <el-button v-if="isAuth('admin:signinfo:save')" type="primary" @click="addOrUpdateHandle()">新增</el-button>
-        <el-button v-if="isAuth('admin:signinfo:delete')" type="danger" @click="deleteHandle()" :disabled="dataListSelections.length <= 0">批量删除</el-button>
+        <el-button
+          v-if="isAuth('admin:signinfo:save')"
+          type="primary"
+          @click="addOrUpdateHandle()"
+        >新增</el-button>
+        <el-button
+          v-if="isAuth('admin:signinfo:delete')"
+          type="danger"
+          @click="deleteHandle()"
+          :disabled="dataListSelections.length <= 0"
+        >批量删除</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -15,136 +24,33 @@
       border
       v-loading="dataListLoading"
       @selection-change="selectionChangeHandle"
-      style="width: 100%;">
-      <el-table-column
-        type="selection"
-        header-align="center"
-        align="center"
-        width="50">
+      style="width: 100%;"
+    >
+      <el-table-column type="selection" header-align="center" align="center" width="50"></el-table-column>
+      <el-table-column prop="truename" header-align="center" align="center" label="姓名"></el-table-column>
+      <el-table-column prop="organization" header-align="center" align="center" label="所属机构"></el-table-column>
+      <!-- <el-table-column prop="jobTitle" header-align="center" align="center" label="职称"></el-table-column> -->
+      <el-table-column prop="phone" header-align="center" align="center" label="电话"></el-table-column>
+      <el-table-column prop="status" header-align="center" align="center" label="签到状态">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.status===1">已签到</el-tag>
+          <el-tag v-else type="danger">未签到</el-tag>
+        </template>
       </el-table-column>
-      <el-table-column
-        prop="id"
-        header-align="center"
-        align="center"
-        label="签到id">
+      <el-table-column prop="badge" header-align="center" align="center" label="是否完成胸卡打印">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.badge===1">是</el-tag>
+          <el-tag v-else type="danger">否</el-tag>
+        </template>
       </el-table-column>
-      <el-table-column
-        prop="aId"
-        header-align="center"
-        align="center"
-        label="参会人员id">
-      </el-table-column>
-      <el-table-column
-        prop="meetingId"
-        header-align="center"
-        align="center"
-        label="会议id">
-      </el-table-column>
-      <el-table-column
-        prop="truename"
-        header-align="center"
-        align="center"
-        label="姓名">
-      </el-table-column>
-      <el-table-column
-        prop="organization"
-        header-align="center"
-        align="center"
-        label="所属机构(单位名称、公司名称">
-      </el-table-column>
-      <el-table-column
-        prop="position"
-        header-align="center"
-        align="center"
-        label="职位id">
-      </el-table-column>
-      <el-table-column
-        prop="jobTitle"
-        header-align="center"
-        align="center"
-        label="职称">
-      </el-table-column>
-      <el-table-column
-        prop="phone"
-        header-align="center"
-        align="center"
-        label="电话">
-      </el-table-column>
-      <el-table-column
-        prop="typeId"
-        header-align="center"
-        align="center"
-        label="参会人员类型id">
-      </el-table-column>
-      <el-table-column
-        prop="typeAttenders"
-        header-align="center"
-        align="center"
-        label="">
-      </el-table-column>
-      <el-table-column
-        prop="servicer"
-        header-align="center"
-        align="center"
-        label="负责人（员工id）">
-      </el-table-column>
-      <el-table-column
-        prop="servername"
-        header-align="center"
-        align="center"
-        label="">
-      </el-table-column>
-      <el-table-column
-        prop="isPay"
-        header-align="center"
-        align="center"
-        label="">
-      </el-table-column>
-      <el-table-column
-        prop="status"
-        header-align="center"
-        align="center"
-        label="签到状态">
-      </el-table-column>
-      <el-table-column
-        prop="badge"
-        header-align="center"
-        align="center"
-        label="是否完成胸卡打印">
-      </el-table-column>
-      <el-table-column
-        prop="lastTime"
-        header-align="center"
-        align="center"
-        label="最后签到时间">
-      </el-table-column>
-      <el-table-column
-        prop="note"
-        header-align="center"
-        align="center"
-        label="备注">
-      </el-table-column>
-      <el-table-column
-        prop="regflag"
-        header-align="center"
-        align="center"
-        label="注册情况 0, 1, 2, 现场注册">
-      </el-table-column>
-      <el-table-column
-        prop="createTime"
-        header-align="center"
-        align="center"
-        label="创建时间">
-      </el-table-column>
-      <el-table-column
-        fixed="right"
-        header-align="center"
-        align="center"
-        width="150"
-        label="操作">
+      <el-table-column prop="servername" header-align="center" align="center" label="负责人"></el-table-column>
+      <el-table-column prop="createTime" header-align="center" align="center" label="创建时间"></el-table-column>
+      <el-table-column prop="lastTime" header-align="center" align="center" label="最后签到时间"></el-table-column>
+      <el-table-column prop="note" header-align="center" align="center" label="备注"></el-table-column>
+      <el-table-column fixed="right" header-align="center" align="center" width="150" label="操作">
         <template slot-scope="scope">
           <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">修改</el-button>
-          <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button>
+          <!-- <el-button type="text" size="small" @click="deleteHandle(scope.row.id)">删除</el-button> -->
         </template>
       </el-table-column>
     </el-table>
@@ -155,111 +61,118 @@
       :page-sizes="[10, 20, 50, 100]"
       :page-size="pageSize"
       :total="totalPage"
-      layout="total, sizes, prev, pager, next, jumper">
-    </el-pagination>
+      layout="total, sizes, prev, pager, next, jumper"
+    ></el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
   </div>
 </template>
 
 <script>
-  import AddOrUpdate from './signinfo-add-or-update'
-  export default {
-    data () {
-      return {
-        dataForm: {
-          key: ''
-        },
-        dataList: [],
-        pageIndex: 1,
-        pageSize: 10,
-        totalPage: 0,
-        dataListLoading: false,
-        dataListSelections: [],
-        addOrUpdateVisible: false
-      }
+import AddOrUpdate from "./signinfo-add-or-update";
+export default {
+  data() {
+    return {
+      dataForm: {
+        key: ""
+      },
+      dataList: [],
+      pageIndex: 1,
+      pageSize: 10,
+      totalPage: 0,
+      dataListLoading: false,
+      dataListSelections: [],
+      addOrUpdateVisible: false
+    };
+  },
+  components: {
+    AddOrUpdate
+  },
+  activated() {
+    this.getDataList();
+  },
+  methods: {
+    // 获取数据列表
+    getDataList() {
+      this.dataListLoading = true;
+      this.$http({
+        url: this.$http.adornUrl("/admin/signinfo/list"),
+        method: "get",
+        params: this.$http.adornParams({
+          page: this.pageIndex,
+          limit: this.pageSize,
+          key: this.dataForm.key,
+          meetingId: this.$route.params.id
+        })
+      }).then(({ data }) => {
+        if (data && data.code === 0) {
+          this.dataList = data.page.list;
+          this.totalPage = data.page.totalCount;
+        } else {
+          this.dataList = [];
+          this.totalPage = 0;
+        }
+        this.dataListLoading = false;
+      });
     },
-    components: {
-      AddOrUpdate
+    // 每页数
+    sizeChangeHandle(val) {
+      this.pageSize = val;
+      this.pageIndex = 1;
+      this.getDataList();
     },
-    activated () {
-      this.getDataList()
+    // 当前页
+    currentChangeHandle(val) {
+      this.pageIndex = val;
+      this.getDataList();
     },
-    methods: {
-      // 获取数据列表
-      getDataList () {
-        this.dataListLoading = true
+    // 多选
+    selectionChangeHandle(val) {
+      this.dataListSelections = val;
+    },
+    // 新增 / 修改
+    addOrUpdateHandle(id) {
+      this.addOrUpdateVisible = true;
+      this.$nextTick(() => {
+        this.$refs.addOrUpdate.init(id);
+      });
+    },
+    // 删除
+    deleteHandle(id) {
+      var ids = id
+        ? [id]
+        : this.dataListSelections.map(item => {
+            return item.id;
+          });
+      this.$confirm(
+        `确定对[id=${ids.join(",")}]进行[${id ? "删除" : "批量删除"}]操作?`,
+        "提示",
+        {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        }
+      ).then(() => {
         this.$http({
-          url: this.$http.adornUrl('/admin/signinfo/list'),
-          method: 'get',
-          params: this.$http.adornParams({
-            'page': this.pageIndex,
-            'limit': this.pageSize,
-            'key': this.dataForm.key
-          })
-        }).then(({data}) => {
+          url: this.$http.adornUrl("/admin/signinfo/delete"),
+          method: "post",
+          data: this.$http.adornData(ids, false)
+        }).then(({ data }) => {
           if (data && data.code === 0) {
-            this.dataList = data.page.list
-            this.totalPage = data.page.totalCount
+            this.$message({
+              message: "操作成功",
+              type: "success",
+              duration: 1500,
+              onClose: () => {
+                this.getDataList();
+              }
+            });
           } else {
-            this.dataList = []
-            this.totalPage = 0
+            this.$message.error(data.msg);
           }
-          this.dataListLoading = false
-        })
-      },
-      // 每页数
-      sizeChangeHandle (val) {
-        this.pageSize = val
-        this.pageIndex = 1
-        this.getDataList()
-      },
-      // 当前页
-      currentChangeHandle (val) {
-        this.pageIndex = val
-        this.getDataList()
-      },
-      // 多选
-      selectionChangeHandle (val) {
-        this.dataListSelections = val
-      },
-      // 新增 / 修改
-      addOrUpdateHandle (id) {
-        this.addOrUpdateVisible = true
-        this.$nextTick(() => {
-          this.$refs.addOrUpdate.init(id)
-        })
-      },
-      // 删除
-      deleteHandle (id) {
-        var ids = id ? [id] : this.dataListSelections.map(item => {
-          return item.id
-        })
-        this.$confirm(`确定对[id=${ids.join(',')}]进行[${id ? '删除' : '批量删除'}]操作?`, '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          this.$http({
-            url: this.$http.adornUrl('/admin/signinfo/delete'),
-            method: 'post',
-            data: this.$http.adornData(ids, false)
-          }).then(({data}) => {
-            if (data && data.code === 0) {
-              this.$message({
-                message: '操作成功',
-                type: 'success',
-                duration: 1500,
-                onClose: () => {
-                  this.getDataList()
-                }
-              })
-            } else {
-              this.$message.error(data.msg)
-            }
-          })
-        })
-      }
+        });
+      });
     }
   }
+};
 </script>

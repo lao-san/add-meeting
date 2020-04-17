@@ -40,8 +40,8 @@
       </el-form-item>
       <el-form-item label="住宿要求" prop="room">
         <!-- <el-input v-model="dataForm.room" placeholder="住宿要求"></el-input> -->
-        <el-radio v-model="dataForm.room" :label="1">有</el-radio>
-        <el-radio v-model="dataForm.room" :label="0">无</el-radio>
+        <el-radio v-model="dataForm.room" :label="1">是</el-radio>
+        <el-radio v-model="dataForm.room" :label="0">否</el-radio>
       </el-form-item>
       <el-form-item label="接送要求" prop="transfer">
         <!-- <el-input v-model="dataForm.transfer" placeholder="接送要求"></el-input> -->
