@@ -43,12 +43,7 @@
       ></el-table-column>
       <!-- <el-table-column prop="uscPicture" header-align="center" align="center" label="证件扫码件(图片)地址"></el-table-column> -->
       <!-- <el-table-column prop="level" header-align="center" align="center" label="账号等级"></el-table-column> -->
-      <el-table-column
-        prop="isCheck"
-        header-align="center"
-        align="center"
-        label="是否通过审核 0:未通过 1:通过"
-      ></el-table-column>
+      
       <el-table-column prop="createTime" header-align="center" align="center" label="创建时间"></el-table-column>
       <el-table-column prop="modifyTime" header-align="center" align="center" label="修改时间"></el-table-column>
       <el-table-column fixed="right" header-align="center" align="center" width="150" label="操作">

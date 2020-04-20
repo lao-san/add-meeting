@@ -82,8 +82,8 @@
           <el-button v-else @click="changeStatus(scope.row.id, 'transfer', 1) ">否</el-button>
         </template>
       </el-table-column>
-      <el-table-column prop="transfer" header-align="center" align="center" label="用户类型"></el-table-column>
-      <el-table-column prop="servicer" header-align="center" align="center" label="负责人"></el-table-column>
+      <el-table-column prop="typeName" header-align="center" align="center" label="用户类型"></el-table-column>
+      <el-table-column prop="servicerName" header-align="center" align="center" label="负责人"></el-table-column>
       <el-table-column prop="note" header-align="center" align="center" label="备注"></el-table-column>
       <!-- <el-table-column
         prop="account"
@@ -106,7 +106,7 @@
       </el-table-column>-->
 
       <!-- <el-table-column prop="createTime" header-align="center" align="center" label="创建时间"></el-table-column> -->
-      <el-table-column prop="modifyTime" header-align="center" align="center" label="修改时间"></el-table-column>
+      <el-table-column prop="modify_time" header-align="center" align="center" label="修改时间"></el-table-column>
       <!-- <el-table-column prop="creater" header-align="center" align="center" label="创建者"></el-table-column>
       <el-table-column prop="modifier" header-align="center" align="center" label="修改者"></el-table-column>-->
       <el-table-column fixed="right" header-align="center" align="center" width="150" label="操作">

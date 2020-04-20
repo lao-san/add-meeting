@@ -67,7 +67,13 @@
           ></el-date-picker>
         </el-form-item>
         <el-form-item label="投稿要求">
-          <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="paprData.content"></el-input>
+          <el-input
+            type="textarea"
+            :rows="2"
+            placeholder="请输入内容"
+            v-model="paprData.content"
+            :autosize="{ minRows: 10, maxRows: 30}"
+          ></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -122,6 +128,7 @@ export default {
         })
       }).then(({ data }) => {
         if (data && data.code === 0) {
+          window.console.log(data);
           this.dataList = data.page.list;
           this.totalPage = data.page.totalCount;
         } else {
@@ -196,11 +203,10 @@ export default {
         method: "post",
         data: this.paprData
       }).then(res => {
-        window.console.log(res)
+        window.console.log(res);
         if (res.data && res.data.code === 0) {
           this.addOrVisible = false;
-          this.paprData.deadline = '',
-          this.paprData.content = ''
+          (this.paprData.deadline = ""), (this.paprData.content = "");
         } else {
           this.$message.error(res.data.msg);
         }

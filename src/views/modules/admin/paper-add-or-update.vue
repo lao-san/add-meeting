@@ -29,6 +29,9 @@
           ref="upload"
           :action="upload_url"
           :on-success="successHandle"
+          :file-list="fileList"
+          :limit="1"
+          :on-exceed="handleExceed"
           :auto-upload="false"
           name="upload_file"
         >
@@ -71,7 +74,8 @@ export default {
       },
       options: [],
       upload_url: "",
-      successNum: 0
+      successNum: 0,
+      fileList: []
     };
   },
   created() {
@@ -117,7 +121,8 @@ export default {
               meetingId: this.$route.params.id,
               attendersId: this.dataForm.attendersId,
               title: this.dataForm.title,
-              summary: this.dataForm.summary
+              summary: this.dataForm.summary,
+              paperurl: this.dataForm.paperurl
             })
           }).then(({ data }) => {
             if (data && data.code === 0) {
@@ -130,8 +135,10 @@ export default {
                   this.$emit("refreshDataList");
                 }
               });
+              this.fileList = [];
             } else {
               this.$message.error(data.msg);
+              this.fileList = [];
             }
           });
         }
@@ -151,12 +158,24 @@ export default {
         }
       });
     },
-    paperUpload() {},
     submitUpload() {
       this.$refs.upload.submit();
     },
     successHandle(response) {
-      window.console.log(response)
+      if (response && response.code === 0) {
+        this.dataForm.paperurl = response.filename;
+        this.$message({
+          message: "上传成功",
+          type: "success"
+        });
+      } else {
+        this.$message.error(response.msg);
+      }
+    },
+    handleExceed(files, fileList) {
+      //上传限制
+      window.console.log(files, fileList);
+      this.$message.warning(`只能上传 1 个文件`);
     }
   }
 };

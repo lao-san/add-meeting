@@ -2,7 +2,7 @@
   <div class="mod-config">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="dataForm.key" placeholder="参数名" clearable></el-input>
+        <el-input v-model="dataForm.key" placeholder="姓名/负责人" clearable></el-input>
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
@@ -43,7 +43,14 @@
           <el-tag v-else type="danger">否</el-tag>
         </template>
       </el-table-column>
+      <el-table-column prop="money" header-align="center" align="center" label="金额(单位元)"></el-table-column>
       <el-table-column prop="servername" header-align="center" align="center" label="负责人"></el-table-column>
+      <el-table-column prop="isPay" header-align="center" align="center" label="是否缴费">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.isPay===1">是</el-tag>
+          <el-tag v-else type="danger">否</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column prop="createTime" header-align="center" align="center" label="创建时间"></el-table-column>
       <el-table-column prop="lastTime" header-align="center" align="center" label="最后签到时间"></el-table-column>
       <el-table-column prop="note" header-align="center" align="center" label="备注"></el-table-column>
