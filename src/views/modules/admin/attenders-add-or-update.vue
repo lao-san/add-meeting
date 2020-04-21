@@ -303,11 +303,7 @@ export default {
               note: this.dataForm.note,
               account: this.dataForm.account,
               emailLx: this.dataForm.emailLx,
-              regflag: this.dataForm.regflag,
-              createTime: this.dataForm.createTime,
-              modifyTime: this.dataForm.modifyTime,
-              creater: this.dataForm.creater,
-              modifier: this.dataForm.modifier
+            
             })
           }).then(({ data }) => {
             if (data && data.code === 0) {

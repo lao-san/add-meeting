@@ -45,7 +45,7 @@
       <el-form-item label="职称" prop="jobTitle">
         <el-input v-model="dataForm.jobTitle" placeholder="职称"></el-input>
       </el-form-item>
-     
+
       <el-form-item label="电话" prop="phone">
         <el-input v-model="dataForm.phone" placeholder="电话"></el-input>
       </el-form-item>
@@ -204,8 +204,7 @@ export default {
               phone: this.dataForm.phone,
               email: this.dataForm.email,
               createTime: this.dataForm.createTime,
-              modifyTime: this.dataForm.modifyTime,
-            
+              modifyTime: this.dataForm.modifyTime
             })
           }).then(({ data }) => {
             if (data && data.code === 0) {

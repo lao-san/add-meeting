@@ -27,17 +27,22 @@
       <el-table-column prop="typeAttenders" header-align="center" align="center" label="用户参会类型"></el-table-column>
       <el-table-column prop="isPay" header-align="center" align="center" label="是否已缴费">
         <template slot-scope="scope">
-          <span v-if="scope.row.isPay === 1">是</span>
-          <span v-else>否</span>
+          <el-tag v-if="scope.row.isPay === 1">是</el-tag>
+          <el-tag v-else type="danger">否</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="status" header-align="center" align="center" label="签到状态">
         <template slot-scope="scope">
-          <span v-if="scope.row.status === 1">已签到</span>
-          <span v-else>否</span>
+          <el-tag v-if="scope.row.status === 1">是</el-tag>
+          <el-tag v-else type="danger">否</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="badge" header-align="center" align="center" label="胸卡"></el-table-column>
+      <el-table-column prop="badge" header-align="center" align="center" label="胸卡">
+        <template slot-scope="scope">
+          <el-tag v-if="scope.row.badge === 1">是</el-tag>
+          <el-tag v-else type="danger">否</el-tag>
+        </template>
+      </el-table-column>
       <el-table-column prop="servername" header-align="center" align="center" label="负责人"></el-table-column>
       <el-table-column prop="lastTime" header-align="center" align="center" label="最后签到时间"></el-table-column>
       <el-table-column fixed="right" header-align="center" align="center" width="100" label="操作">
@@ -136,15 +141,11 @@ export default {
         : this.dataListSelections.map(item => {
             return item.id;
           });
-      this.$confirm(
-        `确定对[id=${ids.join(",")}]进行[${id ? "删除" : "批量删除"}]操作?`,
-        "提示",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        }
-      ).then(() => {
+      this.$confirm(`确定删除?`, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(() => {
         this.$http({
           url: this.$http.adornUrl("/admin/signinfo/delete"),
           method: "post",

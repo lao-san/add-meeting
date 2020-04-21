@@ -93,7 +93,7 @@ export default {
       margin: 0 auto;
     }
     .introduction {
-      width: 300px;
+      width: 400px;
     }
   }
 }

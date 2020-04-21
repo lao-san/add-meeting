@@ -2,7 +2,7 @@
   <div class="mod-config">
     <el-form :inline="true" :model="dataForm" @keyup.enter.native="getDataList()">
       <el-form-item>
-        <el-input v-model="dataForm.key" placeholder="参数名" clearable></el-input>
+        <el-input v-model="dataForm.key" placeholder="投稿人/论文题目" clearable></el-input>
       </el-form-item>
       <el-form-item>
         <el-button @click="getDataList()">查询</el-button>
@@ -33,7 +33,7 @@
       <el-table-column prop="create_time" header-align="center" align="center" label="投稿时间"></el-table-column>
       <el-table-column header-align="center" align="center" label="下载">
         <template slot-scope="scope">
-          <el-button type="text" size="small" @click="addOrUpdateHandle(scope.row.id)">下载</el-button>
+          <el-button type="text" size="small" @click="exportList(scope.row)">下载</el-button>
         </template>
       </el-table-column>
       <el-table-column fixed="right" header-align="center" align="center" width="150" label="操作">
@@ -167,15 +167,11 @@ export default {
         : this.dataListSelections.map(item => {
             return item.id;
           });
-      this.$confirm(
-        `确定对[id=${ids.join(",")}]进行[${id ? "删除" : "批量删除"}]操作?`,
-        "提示",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        }
-      ).then(() => {
+      this.$confirm(`确定删除?`, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(() => {
         this.$http({
           url: this.$http.adornUrl("/admin/paper/delete"),
           method: "post",
@@ -211,6 +207,24 @@ export default {
           this.$message.error(res.data.msg);
         }
       });
+    },
+    // 导出数据表
+    exportList(res) {
+      if (res && !res.paperurl == "") {
+        const a = document.createElement("a");
+        a.setAttribute(
+          "download",
+          `http://121.42.53.174:9008${res.paperurl}`
+        );
+        a.setAttribute(
+          "href",
+          `http://121.42.53.174:9008${res.paperurl}`
+        );
+        a.click();
+      }else{
+        this.$message.error('未上传投稿文件')
+      }
+      
     }
   }
 };
