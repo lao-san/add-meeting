@@ -195,11 +195,10 @@ export default {
     requirements() {
       //投稿要求
       this.$http({
-        url: this.$http.adornUrl("/admin/paperrequire/update"),
+        url: this.$http.adornUrl("/admin/moneyaccount/infobymid/:mid"),
         method: "post",
         data: this.paprData
       }).then(res => {
-        window.console.log(res);
         if (res.data && res.data.code === 0) {
           this.addOrVisible = false;
           (this.paprData.deadline = ""), (this.paprData.content = "");

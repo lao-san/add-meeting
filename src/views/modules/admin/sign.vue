@@ -76,13 +76,10 @@ export default {
       totalPage: 0,
       dataListLoading: false,
       dataListSelections: [],
-      meetingId: 0
+      meetingId: this.$route.params.id
     };
   },
   created() {
-    this.meetingId = this.$route.params.id;
-  },
-  activated() {
     this.getDataList();
   },
   methods: {

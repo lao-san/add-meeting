@@ -47,8 +47,19 @@
       <el-table-column prop="servername" header-align="center" align="center" label="负责人"></el-table-column>
       <el-table-column prop="isPay" header-align="center" align="center" label="是否缴费">
         <template slot-scope="scope">
-          <el-tag v-if="scope.row.isPay===1">是</el-tag>
-          <el-tag v-else type="danger">否</el-tag>
+          <el-button
+            v-if="scope.row.isPay === 0"
+            size="medium"
+            hit="true"
+            @click="changeStatus(1,scope.row.pid)"
+          >否</el-button>
+          <el-button
+            v-else-if="scope.row.isPay === 1"
+            size="medium"
+            hit="true"
+            type="success"
+            @click="changeStatus(0,scope.row.pid)"
+          >是</el-button>
         </template>
       </el-table-column>
       <el-table-column prop="createTime" header-align="center" align="center" label="创建时间"></el-table-column>
@@ -103,7 +114,7 @@ export default {
     getDataList() {
       this.dataListLoading = true;
       this.$http({
-        url: this.$http.adornUrl("/admin/signinfo/list"),
+        url: this.$http.adornUrl("/admin/signinfo/listreg"),
         method: "get",
         params: this.$http.adornParams({
           page: this.pageIndex,
@@ -112,6 +123,7 @@ export default {
           meetingId: this.$route.params.id
         })
       }).then(({ data }) => {
+        window.console.log(data)
         if (data && data.code === 0) {
           this.dataList = data.page.list;
           this.totalPage = data.page.totalCount;
@@ -151,15 +163,11 @@ export default {
         : this.dataListSelections.map(item => {
             return item.id;
           });
-      this.$confirm(
-        `确定删除?`,
-        "提示",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        }
-      ).then(() => {
+      this.$confirm(`确定删除?`, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(() => {
         this.$http({
           url: this.$http.adornUrl("/admin/signinfo/delete"),
           method: "post",
@@ -178,6 +186,37 @@ export default {
             this.$message.error(data.msg);
           }
         });
+      });
+    },
+    // 修改缴费状态
+    changeStatus(status, id) {
+      window.console.log(status,id)
+      this.$http({
+        url: this.$http.adornUrl("/admin/payment/paystatus"),
+        method: "post",
+        data: this.$http.adornParams({
+          id: id,
+          status: status
+        })
+      }).then(({ data }) => {
+        if (data && data.code === 0) {
+          this.$message({
+            message: "操作成功",
+            type: "success",
+            duration: 500,
+            onClose: () => {
+              var dList = this.dataList;
+              dList.forEach(element => {
+                if (element.pid === id) {
+                  element.isPay = status;
+                }
+              });
+              this.dataList = dList;
+            }
+          });
+        } else {
+          this.$message.error(data.msg);
+        }
       });
     }
   }
