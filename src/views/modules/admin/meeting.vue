@@ -13,7 +13,7 @@
         <el-form-item label="涉及行业">
           <el-tag v-for="(item) in industries" :key="item" style="margin-right:10px">{{item}}</el-tag>
         </el-form-item>
-        <el-form-item label="会议负责人">{{this.meetingData.serviceEmp}}</el-form-item>
+        <el-form-item label="会议负责人">{{this.meetingData.serviceName}}</el-form-item>
         <el-form-item label="会议介绍">
           <div class="introduction">{{this.meetingData.introduction}}</div>
         </el-form-item>
@@ -62,6 +62,7 @@ export default {
           method: "get",
           params: this.$http.adornParams()
         }).then(res => {
+          window.console.log(res.data);
           if (res.data && res.data.code === 0) {
             this.meetingData = res.data.meeting;
             this.industries = res.data.meeting.industries.split(",");

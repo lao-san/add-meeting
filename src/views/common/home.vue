@@ -20,7 +20,7 @@
       </el-col>
 
       <meeting-box
-        v-for="item in unpublished"
+        v-for="(item,index) in unpublished"
         :key="item.id"
         :list="item"
         style="margin-top:10px;"
@@ -36,7 +36,7 @@
     </el-row>
     <el-row>
       <meeting-box
-        v-for="item in release"
+        v-for="(item,index) in release"
         :key="item.id"
         :list="item"
         style="margin-top:20px;"
@@ -52,7 +52,7 @@
     </el-row>
     <el-row>
       <meeting-box
-        v-for="item in delRelease"
+        v-for="(item,index) in delRelease"
         :key="item.id"
         :list="item"
         style="margin-top:20px;"
@@ -106,6 +106,10 @@ export default {
   methods: {
     // 获取数据列表
     getDataList() {
+       this.unpublished = [];
+      this.release = [];
+      this.delRelease = [];
+
       this.dataListLoading = true;
       this.$http({
         url: this.$http.adornUrl("/admin/meeting/list"),
@@ -117,7 +121,6 @@ export default {
         })
       }).then(({ data }) => {
         if (data && data.code === 0) {
-          window.console.log(data);
           this.dataList = data.list;
           this.getHandleDataList(data.list);
         } else {

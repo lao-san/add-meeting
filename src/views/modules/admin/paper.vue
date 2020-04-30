@@ -13,7 +13,13 @@
           @click="deleteHandle()"
           :disabled="dataListSelections.length <= 0"
         >批量删除</el-button>
-        <el-button type="success" @click="addOrVisible=true">添加投稿要求</el-button>
+      </el-form-item>
+      <el-form-item>
+        <el-button
+          v-if="isAuth('admin:paperrequire:save')"
+          type="primary"
+          @click="setPagerRequireHandle()"
+        >征文要求设置</el-button>
       </el-form-item>
     </el-form>
     <el-table
@@ -54,38 +60,15 @@
     ></el-pagination>
     <!-- 弹窗, 新增 / 修改 -->
     <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="getDataList"></add-or-update>
-    <!-- 弹窗添加投稿要求 -->
-    <el-dialog title="投稿要求" :visible.sync="addOrVisible">
-      <el-form label-width="100px">
-        <el-form-item label="截止时间">
-          <el-date-picker
-            size="small"
-            v-model="paprData.deadline"
-            type="datetime"
-            placeholder="开始时间"
-            value-format="yyyy-MM-dd HH:mm:ss"
-          ></el-date-picker>
-        </el-form-item>
-        <el-form-item label="投稿要求">
-          <el-input
-            type="textarea"
-            :rows="2"
-            placeholder="请输入内容"
-            v-model="paprData.content"
-            :autosize="{ minRows: 10, maxRows: 30}"
-          ></el-input>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="addOrVisible = false">取 消</el-button>
-        <el-button type="primary" @click="requirements()">确 定</el-button>
-      </span>
-    </el-dialog>
+    <!--  投稿要求弹窗, 新增 / 修改 -->
+    <set-pager-require v-if="setPagerRequireVisible" ref="SetPagerRequire"></set-pager-require>
   </div>
 </template>
 
 <script>
 import AddOrUpdate from "./paper-add-or-update";
+import SetPagerRequire from "./paperrequire-add-or-update";
+
 export default {
   data() {
     return {
@@ -104,14 +87,18 @@ export default {
       dataListLoading: false,
       dataListSelections: [],
       addOrUpdateVisible: false,
-      addOrVisible: false
+      addOrVisible: false,
+      setPagerRequireVisible: false
     };
   },
   components: {
-    AddOrUpdate
+    AddOrUpdate,
+    SetPagerRequire
   },
   activated() {
     this.getDataList();
+  },
+  created() {
   },
   methods: {
     // 获取数据列表
@@ -128,7 +115,6 @@ export default {
         })
       }).then(({ data }) => {
         if (data && data.code === 0) {
-          window.console.log(data);
           this.dataList = data.page.list;
           this.totalPage = data.page.totalCount;
         } else {
@@ -192,38 +178,24 @@ export default {
         });
       });
     },
-    requirements() {
-      //投稿要求
-      this.$http({
-        url: this.$http.adornUrl("/admin/moneyaccount/infobymid/:mid"),
-        method: "post",
-        data: this.paprData
-      }).then(res => {
-        if (res.data && res.data.code === 0) {
-          this.addOrVisible = false;
-          (this.paprData.deadline = ""), (this.paprData.content = "");
-        } else {
-          this.$message.error(res.data.msg);
-        }
-      });
-    },
+
     // 导出数据表
     exportList(res) {
       if (res && !res.paperurl == "") {
         const a = document.createElement("a");
-        a.setAttribute(
-          "download",
-          `http://121.42.53.174:9008${res.paperurl}`
-        );
-        a.setAttribute(
-          "href",
-          `http://121.42.53.174:9008${res.paperurl}`
-        );
+        a.setAttribute("download", `http://121.42.53.174:9008${res.paperurl}`);
+        a.setAttribute("href", `http://121.42.53.174:9008${res.paperurl}`);
         a.click();
-      }else{
-        this.$message.error('未上传投稿文件')
+      } else {
+        this.$message.error("未上传投稿文件");
       }
-      
+    },
+    //设置投稿要求
+    setPagerRequireHandle() {
+      this.setPagerRequireVisible = true;
+      this.$nextTick(() => {
+        this.$refs.SetPagerRequire.init(this.$route.params.id);
+      });
     }
   }
 };

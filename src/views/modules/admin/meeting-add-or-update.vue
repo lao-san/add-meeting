@@ -63,7 +63,6 @@
       </el-form-item>
 
       <el-form-item label="涉及学科" prop="subjects">
-        <!-- <el-input v-model="dataForm.subjects" placeholder=""></el-input> -->
         <el-autocomplete
           v-model="dataForm.subjects"
           :fetch-suggestions="querySearchAsync"
@@ -99,11 +98,37 @@
       <el-form-item v-if="this.typesofattender.length!==0">
         <el-tag v-for="(item) in typesofattender" style="margin-right:8px">{{item}}</el-tag>
       </el-form-item>
+      <el-form-item label="联系人" prop="serviceEm">
+        <el-select
+          v-model="dataForm.contactNames"
+          filterable
+          placeholder="请选择"
+          style="width:220px"
+          @change="handEmploye"
+        >
+          <el-option
+            v-for="item in employeeList"
+            :key="item.id"
+            :label="item.truename"
+            :value="item.id"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item v-if="this.employeePersonId.length!==0">
+        <el-tag v-for="(item) in employeePerson" :key="item" style="margin-right:8px">{{item}}</el-tag>
+      </el-form-item>
+
       <el-form-item label="会议负责人" prop="serviceEmp">
-        <el-input v-model="dataForm.serviceEmp" placeholder="会议负责人"></el-input>
+        <el-select v-model="dataForm.serviceIds" filterable placeholder="请选择" style="width:220px">
+          <el-option
+            v-for="item in employeeList"
+            :key="item.id"
+            :label="item.truename"
+            :value="item.id"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="线上报名开始时间" prop="onlineRegDeadline">
-        <!-- <el-input v-model="dataForm.onlineRegDeadline" placeholder="线上报名截止时间"></el-input> -->
         <el-date-picker
           v-model="dataForm.onlineRegDeadline"
           type="datetime"
@@ -112,7 +137,6 @@
         ></el-date-picker>
       </el-form-item>
       <el-form-item label="现场报名截止时间" prop="onsiteRegDeadline">
-        <!-- <el-input v-model="dataForm.onsiteRegDeadline" placeholder="现场报名截止时间"></el-input> -->
         <el-date-picker
           v-model="dataForm.onsiteRegDeadline"
           type="datetime"
@@ -120,25 +144,8 @@
           value-format="yyyy-MM-dd HH:mm:ss"
         ></el-date-picker>
       </el-form-item>
-      <el-form-item label="投稿截止时间" prop="subDeadline">
-        <el-date-picker
-          v-model="dataForm.subDeadline"
-          type="datetime"
-          placeholder="截止时间"
-          value-format="yyyy-MM-dd HH:mm:ss"
-        ></el-date-picker>
-      </el-form-item>
-      <el-form-item label="投稿范围及要求" prop="subRequirement">
-        <!-- <el-input v-model="dataForm.subRequirement" placeholder="投稿范围及要求"></el-input> -->
-        <el-input
-          type="textarea"
-          :autosize="{ minRows: 2, maxRows: 4}"
-          placeholder="请输入内容"
-          v-model="dataForm.subRequirement"
-        ></el-input>
-      </el-form-item>
+
       <el-form-item label="会议介绍" prop="introduction">
-        <!-- <el-input v-model="dataForm.introduction" placeholder="会议介绍"></el-input> -->
         <el-input
           type="textarea"
           :autosize="{ minRows: 2, maxRows: 10}"
@@ -146,21 +153,6 @@
           v-model="dataForm.introduction"
         ></el-input>
       </el-form-item>
-      <!-- <el-form-item label="投稿要求id" prop="paperRequireId">
-        <el-input v-model="dataForm.paperRequireId" placeholder="投稿要求id"></el-input>
-      </el-form-item>-->
-      <!-- <el-form-item label="创建时间" prop="createTime">
-        <el-input v-model="dataForm.createTime" placeholder="创建时间"></el-input>
-      </el-form-item>
-      <el-form-item label="修改时间" prop="modifyTime">
-        <el-input v-model="dataForm.modifyTime" placeholder="修改时间"></el-input>
-      </el-form-item>-->
-      <!-- <el-form-item label="是否通过审核 0:未通过 1:通过" prop="isCheck">
-        <el-input v-model="dataForm.isCheck" placeholder="是否通过审核 0:未通过 1:通过"></el-input>
-      </el-form-item>-->
-      <!-- <el-form-item label="是否被删除 状态  0：正常   1：删除" prop="isDel">
-        <el-input v-model="dataForm.isDel" placeholder="是否被删除 状态  0：正常   1：删除"></el-input>
-      </el-form-item>-->
     </el-form>
     <span slot="footer" class="dialog-footer">
       <el-button @click="visible = false">取消</el-button>
@@ -177,9 +169,9 @@ export default {
       imageUrl: "",
       visible: false,
       dialogVisible: false,
+
       dataForm: {
-        id: 0,
-        companyId: "",
+        companyId: 1,
         nameCn: "",
         nameEn: "",
         address: "",
@@ -190,16 +182,15 @@ export default {
         subjects: "",
         industries: "",
         attendersType: "",
-        serviceEmp: "",
+        serviceName: "",
+        serviceIds: "",
+        contactNames: "", // 联系人ids
+        contactIds: "", // 联系人姓名
         onlineRegDeadline: "",
         onsiteRegDeadline: "",
-        subDeadline: "",
-        subRequirement: "",
-        introduction: "",
-        paperRequireId: "",
-        createTime: "",
-        modifyTime: ""
+        introduction: ""
       },
+
       dataRule: {
         companyId: [
           { required: true, message: "举办单位id不能为空", trigger: "blur" }
@@ -219,16 +210,7 @@ export default {
         endTime: [
           { required: true, message: "结束时间不能为空", trigger: "blur" }
         ],
-        // titlePicture: [
-        //   {
-        //     required: true,
-        //     message: "会议封面图片地址不能为空",
-        //     trigger: "blur"
-        //   }
-        // ],
-        serviceEmp: [
-          { required: true, message: "会议负责人不能为空", trigger: "blur" }
-        ],
+
         onlineRegDeadline: [
           {
             required: true,
@@ -287,13 +269,17 @@ export default {
       industryRestaurants: [], //行业表信息
       industry: [], //提交后台行业表
       typesofattendersRestaurants: [], //参会人员表信息
-      typesofattender: [] //参会人员提交后台
+      typesofattender: [], //参会人员提交后台
+      employeeList: [], //员工表信息
+      employeePersonId: [],
+      employeePerson: []
     };
   },
   mounted() {
     this.getSubject();
     this.getIndustries();
     this.getAttendersType();
+    this.getEmployeeList();
   },
   methods: {
     init(id) {
@@ -321,8 +307,6 @@ export default {
               this.dataForm.serviceEmp = data.meeting.serviceEmp;
               this.dataForm.onlineRegDeadline = data.meeting.onlineRegDeadline;
               this.dataForm.onsiteRegDeadline = data.meeting.onsiteRegDeadline;
-              this.dataForm.subDeadline = data.meeting.subDeadline;
-              this.dataForm.subRequirement = data.meeting.subRequirement;
               this.dataForm.introduction = data.meeting.introduction;
             }
           });
@@ -352,11 +336,11 @@ export default {
               subjects: this.subjects.join(),
               industries: this.industry.join(),
               attendersType: this.typesofattender.join(),
-              serviceEmp: this.dataForm.serviceEmp,
+              serviceIds: this.dataForm.serviceIds,
+              contactNames: this.employeePerson.join(),
+              contactIds: this.employeePersonId.join(),
               onlineRegDeadline: this.dataForm.onlineRegDeadline,
               onsiteRegDeadline: this.dataForm.onsiteRegDeadline,
-              subDeadline: this.dataForm.subDeadline,
-              subRequirement: this.dataForm.subRequirement,
               introduction: this.dataForm.introduction
             })
           }).then(({ data }) => {
@@ -506,8 +490,43 @@ export default {
         this.typesofattender.push(this.dataForm.attendersType);
         this.dataForm.attendersType = "";
       }
+    },
+    //获取员工列表模糊查询
+    getEmployeeList() {
+      this.$http({
+        url: this.$http.adornUrl(`/admin/employee/findAllByTrueName`),
+        method: "get",
+        params: this.$http.adornParams({
+          truename: ""
+        })
+      }).then(({ data }) => {
+        if (data) {
+          this.employeeList = data;
+          for (let i of this.employeeList) {
+            i.value = i.truename;
+          }
+        }
+      });
+    },
+    //添加联系人
+    handEmploye() {
+      if (this.employeePersonId.length >= 3) {
+        this.$message.error({
+          message: "联系人最多添加三个",
+          type: "danger",
+          duration: 1500
+        });
+      } else {
+        this.employeePersonId.push(this.dataForm.contactNames);
+        for (let i = 0; i < this.employeeList.length; i++) {
+          if (this.dataForm.contactNames === this.employeeList[i].id) {
+            this.employeePerson.push(this.employeeList[i].truename);
+          }
+        }
+      }
     }
   }
+  
 };
 </script>
 <style lang='scss'>

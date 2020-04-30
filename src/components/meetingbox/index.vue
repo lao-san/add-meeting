@@ -79,6 +79,8 @@ export default {
           status: this.list.isCheck === 0 ? 1 : 2
         }
       }).then(({ data }) => {
+          window.console.log(data)
+
         if (data) {
           this.$emit("statusMeeting");
         } else {
