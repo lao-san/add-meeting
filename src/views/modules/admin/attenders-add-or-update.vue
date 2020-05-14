@@ -11,25 +11,40 @@
       @keyup.enter.native="dataFormSubmit()"
       label-width="100px"
     >
-      <el-form-item label="姓名" prop="name">
-        <el-input v-model="dataForm.name" placeholder="姓名"></el-input>
+      <el-form-item label="姓名" prop="state2">
+        <el-autocomplete
+          class="inline-input"
+          v-model="dataForm.state2"
+          :fetch-suggestions="querySearch"
+          placeholder="请输入内容"
+          :trigger-on-focus="false"
+          @select="handleSelect"
+          :style="!dataForm.id ? 'width:80%' :'width:100%' "
+        ></el-autocomplete>
+        <el-button
+          @click="creatorUser"
+          class="ll-button"
+          type="primary"
+          v-show="!dataForm.id"
+        >添加新的会员</el-button>
       </el-form-item>
+
       <el-form-item label="所属机构" prop="organization">
         <el-input v-model="dataForm.organization" placeholder="所属机构(单位名称、公司名称)"></el-input>
       </el-form-item>
-      <el-form-item label="职位" prop="position">
+      <el-form-item label="职位">
         <el-input v-model="dataForm.position" placeholder="职位"></el-input>
       </el-form-item>
-      <el-form-item label="职称" prop="jobTitle">
+      <el-form-item label="职称">
         <el-input v-model="dataForm.jobTitle" placeholder="职称"></el-input>
       </el-form-item>
-      <el-form-item label="电话" prop="phone">
-        <el-input v-model="dataForm.phone" placeholder="电话"></el-input>
+      <el-form-item label="手机号" prop="phone">
+        <el-input v-model="dataForm.phone" placeholder="手机号"></el-input>
       </el-form-item>
-      <el-form-item label="邮箱" prop="email">
+      <el-form-item label="邮箱">
         <el-input v-model="dataForm.email" placeholder="邮箱"></el-input>
       </el-form-item>
-      <el-form-item label="办公电话" prop="officephone">
+      <el-form-item label="办公电话">
         <el-input v-model="dataForm.officephone" placeholder="办公电话"></el-input>
       </el-form-item>
 
@@ -49,7 +64,6 @@
         <el-radio v-model="dataForm.transfer" :label="0">否</el-radio>
       </el-form-item>
       <el-form-item label="负责人" prop="servicer">
-        <!-- <el-input v-model="dataForm.servicer" placeholder="负责人"></el-input> -->
         <el-select v-model="dataForm.servicer" filterable placeholder="请选择">
           <el-option
             v-for="item in employeeList"
@@ -60,7 +74,6 @@
         </el-select>
       </el-form-item>
       <el-form-item label="用户类型" prop="typeId">
-        <!-- <el-input v-model="dataForm.servicer" placeholder="负责人"></el-input> -->
         <el-select v-model="dataForm.typeId" filterable placeholder="请选择">
           <el-option
             v-for="item in typesofattendersList"
@@ -70,36 +83,7 @@
           ></el-option>
         </el-select>
       </el-form-item>
-
-      <el-form-item label="联系电话" prop="account">
-        <el-input v-model="dataForm.account" placeholder="联系电话"></el-input>
-      </el-form-item>
-      <el-form-item label="联系邮箱" prop="emailLx">
-        <el-input v-model="dataForm.emailLx" placeholder="联系邮箱"></el-input>
-      </el-form-item>
-      <!-- <el-form-item label="创建时间" prop="createTime">
-        <el-date-picker
-          v-model="dataForm.createTime"
-          type="datetime"
-          placeholder="选择日期时间"
-          value-format="yyyy-MM-dd HH:mm:ss"
-        ></el-date-picker>
-      </el-form-item>
-      <el-form-item label="修改时间" prop="modifyTime">
-        <el-date-picker
-          v-model="dataForm.modifyTime"
-          type="datetime"
-          placeholder="选择日期时间"
-          value-format="yyyy-MM-dd HH:mm:ss"
-        ></el-date-picker>
-      </el-form-item>-->
-      <!-- <el-form-item label="创建者" prop="creater">
-        <el-input v-model="dataForm.creater" placeholder="创建者"></el-input>
-      </el-form-item>
-      <el-form-item label="修改者" prop="modifier">
-        <el-input v-model="dataForm.modifier" placeholder="修改者"></el-input>
-      </el-form-item>-->
-      <el-form-item label="备注" prop="note">
+      <el-form-item label="备注">
         <el-input
           type="textarea"
           :autosize="{ minRows: 2, maxRows: 4}"
@@ -140,19 +124,15 @@ export default {
         note: "",
         account: "",
         emailLx: "",
-        regflag: ""
-
-        // creater: "",
-        // modifier: "",
+        regflag: "",
+        state2: ""
       },
       dataRule: {
         meetingId: [
           { required: true, message: "会议id不能为空", trigger: "blur" }
         ],
-        memberId: [
-          { required: true, message: "会员id不能为空", trigger: "blur" }
-        ],
-        name: [{ required: true, message: "姓名不能为空", trigger: "blur" }],
+
+        // state2: [{ required: true, message: "没有会员信息", trigger: "blur" }],
         organization: [
           {
             required: true,
@@ -160,20 +140,9 @@ export default {
             trigger: "blur"
           }
         ],
-        position: [
-          { required: true, message: "职位不能为空", trigger: "blur" }
-        ],
-        jobTitle: [
-          { required: true, message: "职称不能为空", trigger: "blur" }
-        ],
         phone: [{ required: true, message: "电话不能为空", trigger: "blur" }],
         email: [{ required: true, message: "邮箱不能为空", trigger: "blur" }],
-        officephone: [
-          { required: true, message: "办公电话不能为空", trigger: "blur" }
-        ],
-        typeId: [
-          { required: true, message: "参会人员类型id不能为空", trigger: "blur" }
-        ],
+
         intention: [
           { required: true, message: "参会意向不能为空", trigger: "blur" }
         ],
@@ -189,52 +158,22 @@ export default {
             message: "负责人（员工id）不能为空",
             trigger: "blur"
           }
-        ],
-        note: [{ required: true, message: "备注不能为空", trigger: "blur" }],
-        account: [
-          { required: true, message: "联系电话不能为空", trigger: "blur" }
-        ],
-        emailLx: [
-          { required: true, message: "联系邮箱不能为空", trigger: "blur" }
-        ],
-        regflag: [
-          {
-            required: true,
-            message: "注册情况 0, 1, 2, 现场注册不能为空",
-            trigger: "blur"
-          }
-        ],
-        createTime: [
-          { required: true, message: "创建时间不能为空", trigger: "blur" }
-        ],
-        modifyTime: [
-          { required: true, message: "修改时间不能为空", trigger: "blur" }
-        ],
-        creater: [
-          { required: true, message: "创建者不能为空", trigger: "blur" }
-        ],
-        modifier: [
-          { required: true, message: "修改者不能为空", trigger: "blur" }
-        ],
-        isDel: [
-          {
-            required: true,
-            message: "是否被删除 状态  0：正常   1：删除不能为空",
-            trigger: "blur"
-          }
         ]
       },
       employeeList: [],
-      typesofattendersList: []
+      typesofattendersList: [],
+      restaurants: []
     };
   },
   created() {
     this.getEmployee();
     this.getTypesofattenders();
+    this.getMember();
   },
   methods: {
     init(id) {
       this.dataForm.id = id || 0;
+      this.dataForm.memberId = 0;
       this.visible = true;
       this.$nextTick(() => {
         this.$refs["dataForm"].resetFields();
@@ -262,16 +201,26 @@ export default {
               this.dataForm.transfer = data.attenders.transfer;
               this.dataForm.servicer = data.attenders.servicer;
               this.dataForm.note = data.attenders.note;
-              this.dataForm.account = data.attenders.account;
-              this.dataForm.emailLx = data.attenders.emailLx;
-              this.dataForm.regflag = data.attenders.regflag;
-              this.dataForm.createTime = data.attenders.createTime;
-              this.dataForm.modifyTime = data.attenders.modifyTime;
-              this.dataForm.creater = data.attenders.creater;
-              this.dataForm.modifier = data.attenders.modifier;
-              this.dataForm.isDel = data.attenders.isDel;
+              this.dataForm.state2 = data.attenders.name;
             }
           });
+        } else {
+          this.dataForm.meetingId = "";
+          this.dataForm.memberId = "";
+          this.dataForm.name = "";
+          this.dataForm.organization = "";
+          this.dataForm.position = "";
+          this.dataForm.jobTitle = "";
+          this.dataForm.phone = "";
+          this.dataForm.email = "";
+          this.dataForm.officephone = "";
+          this.dataForm.typeId = "";
+          this.dataForm.intention = "";
+          this.dataForm.room = "";
+          this.dataForm.transfer = "";
+          this.dataForm.servicer = "";
+          this.dataForm.note = "";
+          this.dataForm.state2 = "";
         }
       });
     },
@@ -300,10 +249,7 @@ export default {
               room: this.dataForm.room,
               transfer: this.dataForm.transfer,
               servicer: this.dataForm.servicer,
-              note: this.dataForm.note,
-              account: this.dataForm.account,
-              emailLx: this.dataForm.emailLx,
-            
+              note: this.dataForm.note
             })
           }).then(({ data }) => {
             if (data && data.code === 0) {
@@ -350,9 +296,69 @@ export default {
         if (data && data.code === 0) {
           this.typesofattendersList = data.list;
         }
-        window.console.log(data.list);
       });
+    },
+    createFilter(queryString) {
+      return restaurant => {
+        return (
+          restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) ===
+          0
+        );
+      };
+    },
+    querySearch(queryString, cb) {
+      var restaurants = this.restaurants;
+      var results = queryString
+        ? restaurants.filter(this.createFilter(queryString))
+        : restaurants;
+      if (results.length === 0) {
+        this.$message.error("没有会员信息,请添加会员信息");
+      }
+      cb(results);
+    },
+    //获取会员信息
+    getMember() {
+      this.$http({
+        url: this.$http.adornUrl("/admin/member/listall"),
+        method: "get"
+      }).then(({ data }) => {
+        if (data.code === 0 && data) {
+          for (let i = 0; i < data.list.length; i++) {
+            data.list[i].value =
+              data.list[i].truename + "," + data.list[i].organization;
+          }
+          this.restaurants = data.list;
+        }
+      });
+    },
+    handleSelect(item) {
+      if (item) {
+        this.dataForm.jiobTitle = item.jiobTitle;
+        this.dataForm.organization = item.organization;
+        this.dataForm.phone = item.phone;
+        this.dataForm.position = item.position;
+        this.dataForm.memberId = item.id;
+        this.dataForm.name = item.truename;
+        this.dataForm.state2 = item.truename;
+      }
+    },
+    creatorUser() {
+      this.dataForm.name = this.dataForm.state2;
+      if (this.dataForm.name) {
+        this.$message({
+          message: "添加成功",
+          type: "success",
+          duration: 1000
+        });
+      }
     }
   }
 };
 </script>
+<style lang="scss" scoped>
+.ll-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+</style>

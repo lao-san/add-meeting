@@ -15,7 +15,7 @@
         <el-input v-model="dataForm.truename" placeholder="姓名"></el-input>
       </el-form-item>
       <el-form-item label="用户名" prop="username">
-        <el-input v-model="dataForm.username" placeholder="用户名"></el-input>
+        <el-input v-model="dataForm.username" placeholder="手机号"></el-input>
       </el-form-item>
       <el-form-item label="密码" prop="password">
         <el-input v-model="dataForm.password" placeholder="密码"></el-input>
@@ -171,8 +171,7 @@ export default {
               this.dataForm.createTime = data.member.createTime;
               this.dataForm.modifyTime = data.member.modifyTime;
               this.dataForm.isCheck = data.member.isCheck;
-              this.showimg =
-                "http://121.42.53.174:9008/static" + data.member.titlePic;
+              this.showimg = this.imageUrl + data.member.titlePic;
             }
           });
         }
@@ -246,9 +245,9 @@ export default {
       if (response && response.code === 0) {
         if (response.hasOwnProperty("thumb")) {
           this.dataForm.titlePic = response.thumb;
-          this.showimg = "http://121.42.53.174:9008/static" + response.thumb;
+          this.showimg = this.imageUrl + response.thumb;
         } else {
-          this.showimg = "http://121.42.53.174:9008/static" + response.picname;
+          this.showimg = this.imageUrl + response.picname;
           this.dataForm.titlePic = response.picname;
           this.dialogVisible = true;
         }

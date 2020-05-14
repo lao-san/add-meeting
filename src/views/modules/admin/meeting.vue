@@ -1,10 +1,10 @@
 <template>
   <div class="ll-content" v-loading="loading">
-    <h1>{{meetingData.nameCn}}</h1>
+    <h1 >{{meetingData.nameCn}}</h1>
     <div class="box">
       <img :src="imageNull" class="bgMeeting" />
-      <el-form label-width="200px">
-        <el-form-item label="会议名称" class="fz_30">{{meetingData.nameCn}}</el-form-item>
+      <el-form label-width="200px" style="margin-top:20px">
+        <!-- <el-form-item label="会议名称" class="fz_30" style="margin-top:50px">{{meetingData.nameCn}}</el-form-item> -->
         <el-form-item label="会议时间">{{meetingData.startTime}}</el-form-item>
         <el-form-item label="举办地点">{{meetingData.address}}</el-form-item>
         <el-form-item label="涉及学科">
@@ -23,6 +23,8 @@
   </div>
 </template>
 <script>
+import { set } from "@/utils";
+
 export default {
   name: "",
   data() {
@@ -39,16 +41,18 @@ export default {
   computed: {
     imageNull() {
       return this.image.includes(",")
-        ? "http://121.42.53.174:9008/static" +
+        ? this.imageUrl +
             this.image
               .split(",")
               .splice(0, 1)
               .join()
-        : "http://121.42.53.174:9008/static" + this.image;
+        : this.imageUrl + this.image;
     }
   },
   beforeMount() {},
-  created() {},
+  created() {
+    this.demo()
+  },
   activated() {
     this.getMeeting();
   },
@@ -62,16 +66,22 @@ export default {
           method: "get",
           params: this.$http.adornParams()
         }).then(res => {
-          window.console.log(res.data);
           if (res.data && res.data.code === 0) {
+            window.console.log(res);
             this.meetingData = res.data.meeting;
             this.industries = res.data.meeting.industries.split(",");
+            // this.industries = set(this.industries);
             this.image = res.data.meeting.titlePicture;
             this.subjectsList = res.data.meeting.subjects.split(",");
+            // this.subjectsList = set(this.subjectsList);
             this.loading = false;
           }
         });
       }
+    },
+    demo(){
+      let ll = set(this.subjectsList)
+      window.console.log(ll)
     }
   }
 };

@@ -24,6 +24,7 @@ Vue.prototype.$http = httpRequest // ajax请求方法
 Vue.prototype.isAuth = isAuth     // 权限方法
 Vue.prototype.meetingMenu = false     // 会议目录
 Vue.prototype.meetingMenuId = 0     // 会议目录
+Vue.prototype.imageUrl = 'http://121.42.53.174:9008/static'
 
 // 保存整站vuex本地储存初始状态
 window.SITE_CONFIG['storeState'] = cloneDeep(store.state)

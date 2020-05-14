@@ -3,7 +3,7 @@
     <el-card :body-style="{ padding: '8px' }" style="height:400px">
       <div
         class="bg"
-        :style="{backgroundImage: 'url( http://121.42.53.174:9008/static' + image + ')', backgroundSize:'cover'}"
+        :style="{backgroundImage: 'url( ' + image + ')', backgroundSize:'cover'}"
         @click="handClick()"
       ></div>
       <div style="padding: 14px;">
@@ -39,7 +39,8 @@ export default {
     return {
       id: "",
       httpimage: "",
-      image: null
+      image: null,
+      imageUrl: this.imageUrl
     };
   },
   props: {
@@ -65,8 +66,10 @@ export default {
           .split(",")
           .splice(0, 1)
           .join();
+        this.image = this.imageUrl + this.image;
       } else {
         this.image = this.httpimage;
+        this.image = this.imageUrl + this.image;
       }
     },
     //修改状态
@@ -79,7 +82,7 @@ export default {
           status: this.list.isCheck === 0 ? 1 : 2
         }
       }).then(({ data }) => {
-          window.console.log(data)
+        window.console.log(data);
 
         if (data) {
           this.$emit("statusMeeting");

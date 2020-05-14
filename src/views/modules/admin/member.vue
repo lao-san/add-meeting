@@ -28,12 +28,12 @@
       <el-table-column prop="username" header-align="center" align="center" label="账号"></el-table-column>
       <el-table-column prop="organization" header-align="center" align="center" label="所属机构"></el-table-column>
       <el-table-column prop="position" header-align="center" align="center" label="职位"></el-table-column>
-      <el-table-column prop="jobTitle" header-align="center" align="center" label="职称"></el-table-column>
+      <!-- <el-table-column prop="jobTitle" header-align="center" align="center" label="职称"></el-table-column> -->
       <el-table-column prop="phone" header-align="center" align="center" label="电话"></el-table-column>
       <el-table-column prop="email" header-align="center" align="center" label="邮箱"></el-table-column>
       <el-table-column prop="meetingCounts" header-align="center" align="center" label="参会场次"></el-table-column>
       <el-table-column prop="meetingName" header-align="center" align="center" label="最后参加会议"></el-table-column>
-      <el-table-column prop="servicerName" header-align="center" align="center" label="负责人"></el-table-column>
+      <!-- <el-table-column prop="servicerName" header-align="center" align="center" label="负责人"></el-table-column> -->
       <el-table-column
         prop="createTime"
         header-align="center"

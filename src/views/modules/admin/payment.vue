@@ -83,7 +83,7 @@ export default {
         key: ""
       },
       dataList: [],
-      pageIndex: 0,
+      pageIndex: 1,
       pageSize: 10,
       totalPage: 0,
       dataListLoading: false,
@@ -112,6 +112,7 @@ export default {
         })
       }).then(({ data }) => {
         if (data && data.code === 0) {
+          
           this.dataList = data.page.list;
           this.totalPage = data.page.totalCount;
         } else {
